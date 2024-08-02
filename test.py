@@ -395,4 +395,49 @@ class SetStrokemethod(Scene):
 
 class SetFillMethod(Scene):
     def construct(self):
+        circle = Circle(1.5).set_fill(GREY, 0.8)
+        self.play(GrowFromCenter(circle))
+        self.wait()
+
+        square = Square(3).set_fill(color=RED_E, opacity=0.3)
+        self.play(GrowFromCenter(square))
+        self.wait()
+
+        note = Tex("$ABCD$ - квадрат", font_size=28, color=YELLOW)
+        note.next_to(square, UP)
+        self.play(Write(note), run_time=2)
+
+        latex = MathTex(
+            r"\angle A + \angle B + \angle C + \angle D = 360^\circ",
+            font_size=28
+        ).set_fill(YELLOW).next_to(square, DOWN, buff=0.4)
+        self.play(Write(latex), run_time=2)
+        self.wait()
+
+class SetColorOpacity(Scene):
+    def construct(self):
+        parallelogram = Polygon(
+            ORIGIN, UR, UR + 2 * RIGHT, 2 * RIGHT,
+            fill_opacity=0.5   
+        ).set_color(ORANGE)
+        parallelogram.move_to(3 * RIGHT)
+        self.play(GrowFromCenter(parallelogram))
+        self.wait()
+        self.play(FadeOut(parallelogram))
+
+        triangle = Triangle(radius=2, fill_color=PINK)
+        triangle.set_opacity(0.75)
+        self.play(GrowFromCenter(triangle))
+        self.wait()
+
+        latex = MathTex(
+            r"\alpha + \beta + \gamma " +
+            r" = 180^\circ", font_size=40
+        )
+        latex.set_color(YELLOW).next_to(triangle, DOWN)
+        self.play(Write(latex), run_time=2)
+        self.wait()
+
+class LayerOrder(Scene):
+    def construct(self):
         pass
