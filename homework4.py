@@ -157,13 +157,186 @@ class Homework4(Scene):
         self.play(FadeOut(line),
                   FadeOut(dashed_line))
         
-class Test(Scene):
-    def construct(self):
-        dot = Dot(
-            point = DL,
-            radius=0.1,
+
+        line1 = Line(
+            start=DL,
+            end=DOWN + 2 * RIGHT
+        )
+        line2 = Line(
+        start=DL,
+        end=2*UR
+        )
+
+        center_dot = Dot(
+            point=DL,
+            color=YELLOW,
+            radius=0.08
+        )
+
+        first_angle = Angle(
+            line1, line2,
+            stroke_width=1,
+            radius=0.5
+        )
+        second_angle = Angle(
+            line1, line2,
+            stroke_width=1,
+            radius=0.6
+        )
+        self.play(Create(line1))
+        self.play(Create(line2))
+        self.play(Create(center_dot))
+        self.play(Create(first_angle))
+        self.play(Create(second_angle))
+        self.wait()
+        self.play(FadeOut(line1),
+                  FadeOut(line2),
+                  FadeOut(center_dot),
+                  FadeOut(first_angle),
+                  FadeOut(second_angle))
+        
+
+        triangle = Triangle(
+            radius=2,
+            fill_opacity=1,
+            fill_color=BLUE_D,
+            stroke_opacity=0
+        )
+
+        dashed_circle = DashedVMobject(
+            Circle(radius=2, stroke_color=WHITE),
+            num_dashes=175,
+        )
+        self.play(GrowFromCenter(triangle, run_time=1.5))
+        self.play(Create(dashed_circle, run_time=2))
+        self.wait(0.5)
+        self.play(FadeOut(dashed_circle),
+                  FadeOut(triangle))
+        
+        rama = Text(
+            "Рамануджан разволновался и вскрикнул:\n"
+            "\"Харди, ну как же, Харди!\"",
+            t2w = {"Рамануджан": BOLD},
+            font_size=24
+        ).to_edge(UL)
+
+        fantastic_equation = MathTex(
+            "1729 = 1^3 + 12^3 = 9^3 + 10^3",
+            tex_to_color_map = {"^3" : YELLOW},
+            font_size=72
+        )
+        self.play(Write(rama, run_time=3))
+        self.play(FadeIn(fantastic_equation, shift=UP))
+        self.wait()
+        self.play(FadeOut(fantastic_equation),
+                  FadeOut(rama))
+        
+
+        cremlin = Star(
+            outer_radius=2,
             color=YELLOW
         )
-        self.play(GrowFromCenter(dot))
+
+        star = Star(
+            n=15,
+            outer_radius=0.5,
+            inner_radius=0,
+            color=YELLOW
+        )
+
+        self.play(GrowFromCenter(cremlin))
+        self.play(GrowFromCenter(star, run_time=0.5))
         self.wait()
+        self.play(ShrinkToCenter(cremlin),
+                  FadeOut(star))
+        
+        ya_line1 = Line(
+            start = 2 * DL,
+            end = 2 * UR
+        )
+        ya_line2 = Line(
+            start = 2 * DOWN,
+            end = 2 * UP
+        )
+
+        ya_angle1 = Angle(
+            ya_line2,
+            ya_line1,
+            quadrant=(-1, 1),
+            stroke_width=1
+        )
+        ya_angle2 = Angle(
+            ya_line2,
+            ya_line1,
+            quadrant=(1, -1),
+            stroke_width=1
+        )
+
+        self.play(Create(ya_line1),
+                  Create(ya_line2))
+        
+        self.play(Create(ya_angle1),
+                  Create(ya_angle2))
+        self.wait()
+        self.play(FadeOut(ya_angle1),
+                  FadeOut(ya_angle2),
+                  FadeOut(ya_line1),
+                  FadeOut(ya_line2))
+        
+        diagonal1 = Line(
+            start = 2 * DL,
+            end = 2 * UR,
+            stroke_color=GREY
+        )
+        diagonal2 = Line(
+            start = 2 * UL,
+            end = 2 * DR,
+            stroke_color=GREY
+        )
+
+        ya_square = Square(
+            side_length = 4,
+            stroke_color=GREY
+        )
+
+        helper_line_1 = Line(
+            2*DL, 2 * DR
+        )
+        helper_line_2 = Line(
+            2*DR, 2 * UR
+        )
+        ya_right_angle = RightAngle(
+            helper_line_1,
+            helper_line_2,
+            quadrant=(-1,1)
+        )
+        golden_right_angle = RightAngle(
+            diagonal1,
+            diagonal2,
+            quadrant=(1, -1),
+            color=YELLOW
+        )
+        opposite_right_angle = RightAngle(
+            diagonal1,
+            diagonal2,
+            quadrant=(-1, 1)
+        )
+        self.play(FadeIn(diagonal1, shift = UR))
+        self.play(FadeIn(diagonal2, shift = UL))
+        self.play(GrowFromCenter(ya_square))
+        self.play(FadeIn(ya_right_angle))
+        self.play(Create(golden_right_angle))
+        self.play(Create(opposite_right_angle))
+        self.wait()
+        self.play(FadeOut(diagonal1),
+                  FadeOut(diagonal2),
+                  FadeOut(ya_right_angle),
+                  FadeOut(ya_square),
+                  FadeOut(golden_right_angle),
+                  FadeOut(opposite_right_angle))
+        
+class Test(Scene):
+    def construct(self):
+        pass
+        
         
