@@ -377,3 +377,22 @@ class DecorativeAttributes(Scene):
         note.next_to(brace, DOWN)
         self.play(FadeIn(note, shift=UP))
         self.wait()
+
+class SetStrokemethod(Scene):
+    def construct (self):
+        square = Square(2).set_stroke(YELLOW, 3, 0.5)
+        self.play(GrowFromCenter(square))
+
+        line = Line(UL, DR)
+        line.set_stroke(color=TEAL_A, width=2, opacity=0.7)
+        self.play(Create(line))
+
+        polygon = Polygon(UP, DOWN, RIGHT,
+            fill_color=DARK_GREY, fill_opacity=0.5)
+        polygon.set_stroke(ORANGE, 2.5).shift(2 * RIGHT)
+        self.play(GrowFromCenter(polygon))
+        self.wait()
+
+class SetFillMethod(Scene):
+    def construct(self):
+        pass
