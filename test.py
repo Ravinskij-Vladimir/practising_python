@@ -514,3 +514,45 @@ class ScaleMethod(Scene):
         star_1 = Star(n=12, inner_radius=-1.5)
         self.play(GrowFromCenter(star_1))
         self.wait()
+
+        star_2 = star_1.copy()
+        star_2.scale(2)
+        self.play(GrowFromCenter(star_2))
+        self.wait()
+
+        self.play(FadeOut(star_1, star_2, shift=DOWN),
+                  lag_ratio=0.1)
+        
+        triangle = Triangle(fill_opacity=0.7)
+        triangle.set_color(GOLD_A).shift(UP)
+        self.play(Create(triangle))
+        self.wait()
+
+        triangle_a = triangle.copy()
+        triangle_b = triangle.copy()
+        triangle_a.scale(scale_factor=2, about_point=3 * UL)
+        dot_a = Dot(3 * UL, color=YELLOW, z_index=1)
+        line_a = DashedLine(
+            3 * UL,
+            3 * RIGHT + DOWN,
+            dashed_ratio=0.8,
+            dash_length=0.15
+        )
+        line_a.set_stroke(GREY_A, 2)
+        self.play(GrowFromCenter(dot_a))
+        self.play(Create(line_a, run_time=1.5))
+        self.play(TransformFromCopy(triangle, triangle_a),
+                  run_time=1.5)
+        self.wait()
+
+        triangle_b.scale(scale_factor=-1.5, about_point=ORIGIN)
+        dot_b = Dot(ORIGIN, color=YELLOW, z_index=1)
+        line_b = DashedLine(UP, 1.5 * DOWN,
+            dashed_ratio=0.8, dash_length=0.15)
+        line_b.set_stroke(GREY_A, 2)
+        self.play(GrowFromCenter(dot_b))
+        self.play(Create(line_b))
+        self.play(TransformFromCopy(triangle, triangle_b,
+                                    run_time=1.5))
+        self.wait(2)
+
