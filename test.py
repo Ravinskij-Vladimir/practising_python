@@ -440,4 +440,40 @@ class SetColorOpacity(Scene):
 
 class LayerOrder(Scene):
     def construct(self):
-        pass
+        star = Star(
+            n=12,
+            inner_radius=0.5,
+            outer_radius=1.5,
+        ).set_color(YELLOW).set_opacity(1)
+        star.shift(0.5 * UL)
+        square = Square(fill_opacity=1)
+        square.set_color(GREEN).shift(0.5 * UR)
+        circle = Circle(fill_opacity=1)
+        circle.set_color(DARK_BLUE)
+
+        self.play(FadeIn(star, square, circle))
+        self.wait()
+        self.remove(star, square, circle)
+        self.add(circle, star, square)
+        self.wait()
+        self.play(FadeOut(circle, star, square,
+                          shift=DOWN))
+        self.wait()
+        dot_A = Dot(LEFT, 0.12)
+        dot_B = Dot(RIGHT, 0.12)
+        line_AB = Line(LEFT, RIGHT, color=PINK).set_z_index(-1)
+
+        self.play(GrowFromCenter(dot_A), GrowFromCenter(dot_B))
+        self.play(Create(line_AB, run_time=2))
+        self.wait()
+
+        self.play(FadeOut(line_AB, dot_A, dot_B))
+
+        circle.scale(1.5)
+        rect = RoundedRectangle(fill_opacity=1, z_index=1)
+        self.play(FadeIn(rect, circle))
+        self.wait()
+        circle.set_z_index(2)
+        self.wait()
+        rect.set_z_index(3)
+        self.wait()
