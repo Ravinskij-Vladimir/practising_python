@@ -477,3 +477,40 @@ class LayerOrder(Scene):
         self.wait()
         rect.set_z_index(3)
         self.wait()
+
+class ColorCode(Scene):
+    def construct(self):
+        pentagon = RegularPolygon(
+            n=5
+        ).set_stroke("#fb9503")
+        pentagon.to_edge(UP, buff=1)
+        self.play(FadeIn(pentagon, shift=DOWN))
+        self.wait()
+
+class RotateMethod(Scene):
+    def construct(self):
+        square_1 = Square().rotate(PI / 4)
+        self.play(FadeIn(square_1))
+        self.wait()
+
+        dot = Dot(color=YELLOW)
+        self.play(GrowFromCenter(dot))
+        self.wait()
+
+        square_2 = Square().shift(2.7 * RIGHT)
+        self.play(FadeIn(square_2))
+        square_2.rotate(90 * DEGREES, about_point=ORIGIN)
+        self.wait()
+
+        circle = Circle().shift(2 * LEFT)
+        self.play(Create(circle, run_time=2.5))
+        self.wait()
+        circle.rotate(-TAU / 4)
+        self.play(Create(circle, run_time=2.5))
+        self.wait()
+
+class ScaleMethod(Scene):
+    def construct(self):
+        star_1 = Star(n=12, inner_radius=-1.5)
+        self.play(GrowFromCenter(star_1))
+        self.wait()
