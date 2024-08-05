@@ -126,4 +126,6 @@ class Homework5(Scene):
 
 class Test(Scene):
     def construct(self):
-       pass
+       circ = Circle()
+       self.play(FadeIn(circ, scale = 0.1))
+       self.play(FadeOut(circ, scale = 0.1))

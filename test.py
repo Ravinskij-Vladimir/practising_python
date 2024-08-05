@@ -572,3 +572,49 @@ class TryScale(Scene):
         self.play(TransformFromCopy(triangle, triangle_a))
         self.wait()
 
+class AppearanceAnimation(Scene):
+    def construct(self):
+        circ = Circle(fill_opacity=0.7)
+        circ.set_color(GREEN)
+        inequality = MathTex(r"e^\pi > \pi ^ e")
+        text = Text("Посимвольное появление", font="Arial")
+        text.set_color(WHITE).shift(2 * UP).scale(0.5)
+        arrow = Arrow().scale(1.5).shift(1.5 * DOWN)
+
+        self.play(FadeIn(circ))
+        self.wait()
+        self.play(FadeIn(circ, shift=DOWN))
+        self.wait()
+        self.play(FadeIn(circ, shift=2 * DR, scale=0.5, run_time=2))
+        self.wait()
+        self.play(FadeOut(circ, scale=0))
+
+        circ.set_color(YELLOW)
+
+        self.play(FadeIn(circ, scale=0))
+        self.wait()
+        self.play(GrowFromCenter(circ))
+        self.play(GrowFromCenter(circ, point_color=WHITE))
+        self.play(GrowFromPoint(circ, 3 * UR))
+        self.play(GrowFromEdge(circ, RIGHT))
+        self.wait()
+        self.play(FadeOut(circ))
+        circ.set_color(RED)
+        self.wait()
+
+        self.play(Create(arrow), run_time=2)
+        self.play(GrowArrow(arrow), run_time=2)
+        self.wait()
+
+        square = Square()
+        self.play(SpinInFromNothing(square))
+        self.play(DrawBorderThenFill(circ))
+        self.play(Write(inequality, run_time=1.5))
+        self.wait()
+        self.play(AddTextLetterByLetter(text))
+        self.wait()
+
+class IndicationAnimation(Scene):
+    def construct(self):
+        circ = Circle().set_fill(WHITE, 0.9).set_stroke(WHITE, 2)
+        identity = MathTex("a^2 + b^2")
