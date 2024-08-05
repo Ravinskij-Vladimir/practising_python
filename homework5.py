@@ -107,6 +107,23 @@ class Homework5(Scene):
         self.wait()
         self.play(FadeOut(equation, point, point_value, trig_circle))
 
+        line_1 = Line(LEFT, 3 * DR, stroke_width=2)
+        line_2 = Line(LEFT, 3 * UR, stroke_width=2)
+        center = Dot(ORIGIN, color=YELLOW, stroke_width=1)
+        circ = Circle(
+            radius = 0.6,
+            color=YELLOW
+        )
+        bigger_circ = circ.copy()
+        bigger_circ.scale(scale_factor=4, about_point=LEFT)
+        self.play(Create(center))
+        self.play(Create(line_1),
+                    Create(line_2))
+        self.play(Create(circ))
+        self.play(TransformFromCopy(circ, bigger_circ, run_time=2))
+        self.wait(2)
+        self.play(FadeOut(bigger_circ, circ, line_1, line_2, center))
+
 class Test(Scene):
     def construct(self):
        pass
