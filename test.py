@@ -556,3 +556,19 @@ class ScaleMethod(Scene):
                                     run_time=1.5))
         self.wait(2)
 
+
+class TryScale(Scene):
+    def construct(self):
+        triangle = Triangle(radius=1)
+        self.play(GrowFromCenter(triangle))
+        triangle_a = triangle.copy()
+        triangle_b = triangle.copy()
+
+        dot_a = Dot(UP, color=YELLOW)
+        self.play(GrowFromCenter(dot_a))
+        self.wait()
+
+        triangle_a.scale(scale_factor=-1, about_point=dot_a.get_center())
+        self.play(TransformFromCopy(triangle, triangle_a))
+        self.wait()
+
