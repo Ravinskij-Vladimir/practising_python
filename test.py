@@ -617,4 +617,53 @@ class AppearanceAnimation(Scene):
 class IndicationAnimation(Scene):
     def construct(self):
         circ = Circle().set_fill(WHITE, 0.9).set_stroke(WHITE, 2)
-        identity = MathTex("a^2 + b^2")
+        identity = MathTex("a^2 + b^2 = c^2")
+        identity.scale(2)
+        box_1 = SurroundingRectangle(identity, buff=0.4)
+        box_1.set_stroke(WHITE, 3)
+        box_2 = SurroundingRectangle(
+            identity,
+            corner_radius=0.2,
+            buff=0.3
+        )
+        title = Tex("Pythagorean theorem", color=ORANGE)
+        title.scale(0.8).next_to(identity, UP)
+        underline = Underline(identity, color=YELLOW)
+
+        self.play(Write(identity, run_time=3))
+        self.play(Create(box_1, run_time=2.5))
+        self.play(FadeOut(box_1, run_time=1.5))
+        self.play(Create(box_2, run_time=2.5))
+        self.play(FadeOut(box_2, run_time=1.5))
+        self.play(Create(underline, run_time=1.5))
+        self.play(FadeOut(underline, run_time=1.5))
+        self.wait()
+
+        self.play(ShowPassingFlash(box_1, run_time=2))
+        self.play(ShowPassingFlash(box_2, run_time=2))
+        self.play(ShowPassingFlash(underline))
+        self.wait()
+        self.play(Indicate(identity, run_time=4,
+            scale_factor=1.5, color=YELLOW_D))
+        
+        self.play(Indicate(identity[0][-1]), run_time=3)
+        self.play(GrowFromCenter(title))
+        self.play(Wiggle(identity, run_time=4))
+        self.wait()
+        
+class MovementAnimation(Scene):
+    def construct(self):
+        circle = Circle()
+        square = Square(3)
+        self.play(circle.animate.shift(RIGHT))
+        self.play(circle.animate.to_edge(UP, buff=0.5))
+        self.play(circle.animate.move_to(ORIGIN))
+        self.play(FadeIn(square))
+        self.play(circle.animate.next_to(square, DOWN))
+        self.play(circle.animate.align_to(square, LEFT))
+        self.play(ApplyMethod(square.shift, 2 * UL))
+        self.wait()
+        self.play(ApplyMethod(square.to_edge, UR, buff=SMALL_BUFF))
+        self.play(ApplyMethod(square.move_to, circle))
+        self.play(ApplyMethod(square.align_to, circle, UP))
+        self.wait()
