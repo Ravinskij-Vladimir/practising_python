@@ -667,3 +667,110 @@ class MovementAnimation(Scene):
         self.play(ApplyMethod(square.move_to, circle))
         self.play(ApplyMethod(square.align_to, circle, UP))
         self.wait()
+
+        self.play(ApplyMethod(circle.move_to, ORIGIN))
+        dot = Dot()
+        self.play(GrowFromCenter(dot))
+        self.play(dot.animate.shift(RIGHT))
+        self.play(MoveAlongPath(dot, circle, run_time=3))
+        self.play(FadeOut(circle))
+        self.play(square.animate.next_to(dot, DL, buff=0.08))
+        self.play(MoveAlongPath(dot, square, run_time=3))
+
+        self.play(FadeOut(square))
+        spline = CubicBezier(3 * LEFT, 3 * UP, 2 * DR, 3 * UR)
+        self.play(Create(spline), run_time=2)
+        self.play(ApplyMethod(dot.move_to, 3 * LEFT))
+        self.play(MoveAlongPath(dot, spline, run_time=2))
+
+class RoundCircle(Scene):
+    def construct(self):
+        circle = Circle(radius=1)
+        big_circle=Circle(radius=4)
+        self.play(GrowFromCenter(big_circle))
+        self.play(circle.animate.move_to(4 * RIGHT))
+        self.play(MoveAlongPath(circle, big_circle, run_time=5))
+        self.wait()
+
+class TransformAnimation(Scene):
+    def construct(self):
+        triangle = Triangle().shift(3 * LEFT)
+        circle = Circle()
+        square = Square().shift(3 * RIGHT)
+        dot = Dot(color=WHITE, radius=0.10)
+
+        self.play(FadeIn(triangle))
+        self.wait()
+        self.play(Transform(triangle, circle))
+        self.play(Transform(triangle, square))
+        self.play(ReplacementTransform(triangle, dot))
+        self.play(FadeOut(dot))
+        self.wait()
+
+        euler_1 = MathTex(
+            r"\sum_{n=1}^\infty \frac{1}{n^2}="
+            r"\frac{\pi^2}{6}"
+        ).shift(1.7 * UP)
+
+        euler_1_copy = euler_1.copy()
+        euler_2 = MathTex(
+            r"\sum_{n=1}^\infty \frac{1}{n^s}="
+            r"\prod_{p}\frac{1}{1-p^{-s}}"
+        )
+        euler_3 = MathTex(
+            r"e^{iy}=\cos y + i\sin y"
+        ).shift(1.3 * DOWN)
+
+        self.play(FadeIn(circle))
+        self.play(ReplacementTransform(circle, euler_1))
+        self.play(ClockwiseTransform(euler_1, euler_2))
+        self.play(CounterclockwiseTransform(euler_1, euler_3))
+        self.wait()
+        self.play(TransformFromCopy(euler_1, euler_2))
+        self.play(TransformFromCopy(euler_1, euler_1_copy))
+        self.wait()
+
+class OtherMethodAnimation(Scene):
+    def construct(self):
+        circle = Circle()
+        self.play(FadeIn(circle))
+        self.wait()
+        self.play(FadeIn(circle, reverse=True))
+        self.wait()
+
+class TimedAnimation(Scene):
+    def construct(self):
+        circ = Circle(1.4, color=YELLOW).shift(1.9 * LEFT)
+        star = Star(color=GOLD).shift(2 * DOWN)
+        rect = Rectangle().to_edge(UP, buff=1).scale(0.7)
+        shapes = VGroup(circ, star, rect)
+
+        tex = MathTex(r"\int \limits _a^b f(x)\,dx=F(b)-F(a)")
+        shapes.add(tex)
+
+        self.play(FadeIn(shapes))
+        self.wait()
+        self.play(FadeOut(shapes, shift=DOWN))
+        self.play(FadeIn(shapes, shift=UP, run_time=3,
+                         lag_ratio=0.1))
+        self.wait()
+        self.play(Rotate(star, about_point=ORIGIN, angle=PI))
+
+class PlotMethod(Scene):
+    def construct(self):
+        axes = Axes(
+            x_range=[-6.5, 6.5],
+            y_range=[-2.5, 2.5],
+            x_axis_config={"numbers_to_include": range(-6, 7)},
+            y_axis_config={"numbers_to_include": range(-2, 3)}
+        )
+        labels = axes.get_axis_labels(x_label="x", y_label="y")
+        cos = axes.plot(lambda x: 1.5 * np.cos(x))
+        self.play(Write(axes, run_time=5), lag_ratio=0.2)
+        self.play(Write(labels))
+        self.play(Create(cos), run_time=3)
+        self.wait(3)
+        dot = Dot(6.5*LEFT + 1.5 * UP, color=YELLOW)
+        self.play(Create(dot))
+        self.play(MoveAlongPath(dot, cos), run_time=3)
+        self.wait()

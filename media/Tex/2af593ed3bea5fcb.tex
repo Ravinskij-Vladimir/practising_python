@@ -1,0 +1,26 @@
+\documentclass[preview]{standalone}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[main=russian, english]{babel}
+\usepackage{paratype}
+\usepackage{nimbusmononarrow}
+\usepackage{amsmath}
+\usepackage{everysel}
+\EverySelectfont{%
+\fontdimen2\font=0.4em% interword space
+\fontdimen3\font=0.2em% interword stretch
+\fontdimen4\font=0.1em% interword shrink
+\fontdimen7\font=0.1em% extra space
+\hyphenchar\font=`\-% to allow hyphenation
+}
+\usepackage{csquotes}
+\usepackage[unicode, linktocpage]{hyperref}
+\usepackage{cite}
+\usepackage{soulutf8}
+
+\begin{document}
+\begin{align*}
+\sum_{n=1}^\infty \frac{1}{n^s}=\prod_{p}\frac{1}{1-p^{-s}}
+\end{align*}
+\end{document}

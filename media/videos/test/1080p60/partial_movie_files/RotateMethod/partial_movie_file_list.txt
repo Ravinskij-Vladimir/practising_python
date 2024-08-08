@@ -1,0 +1,11 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/3977891868_4184998621_223132457.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_1704852926_564836231.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_1007445727_282601107.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_1704852926_4192367771.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_1341784216_2206721492.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_1704852926_3827735550.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_586697378_3081687022.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_1704852926_3970885527.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_2106303457_150443111.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/RotateMethod/2852726489_1704852926_1115350578.mp4'

@@ -1,0 +1,6 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TryScale/3977891868_3404390267_223132457.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TryScale/2852726489_4111250171_669664468.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TryScale/2852726489_1704852926_2921122812.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TryScale/2852726489_329164406_4251810852.mp4'
+file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TryScale/2852726489_1704852926_3770283618.mp4'
