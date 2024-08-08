@@ -765,12 +765,245 @@ class PlotMethod(Scene):
             y_axis_config={"numbers_to_include": range(-2, 3)}
         )
         labels = axes.get_axis_labels(x_label="x", y_label="y")
-        cos = axes.plot(lambda x: 1.5 * np.cos(x))
+        cos = axes.plot(lambda x: np.cos(x))
+        cos.set_stroke(YELLOW, 4)
         self.play(Write(axes, run_time=5), lag_ratio=0.2)
         self.play(Write(labels))
         self.play(Create(cos), run_time=3)
-        self.wait(3)
-        dot = Dot(6.5*LEFT + 1.5 * UP, color=YELLOW)
-        self.play(Create(dot))
-        self.play(MoveAlongPath(dot, cos), run_time=3)
+        self.wait()
+
+
+class ArrangeMethod(Scene):
+    def construct(self):
+        square = VGroup()
+        for i in range(6):
+            square.add(Square(1 + i/10))
+
+        square.arrange() 
+        self.play(Write(square), run_time=2)
+        self.wait()
+        self.play(FadeOut(square))
+
+        square.arrange(LEFT, aligned_edge=DOWN)
+        self.play(Write(square, run_time=2))
+        self.wait()
+        self.play(FadeOut(square))
+
+        square.arrange(UR, buff=0)
+        self.play(Write(square, run_time=2))
+        self.wait()
+        self.play(FadeOut(square))
+
+        square[:4].arrange_in_grid()
+        self.play(Write(square[:4]), run_time=2)
+        self.play(FadeOut(square[:4]))
+
+        square.arrange_in_grid(rows=2)
+        self.play(Write(square, run_time=2))
+        self.play(FadeOut(square))
+
+        square.arrange_in_grid(cols=2, aligned_edge=LEFT)
+        self.play(Write(square, run_time=2))
+        self.play(square.animate.arrange(aligned_edge=DOWN))
+        self.wait()
+        self.play(FadeOut(square))
+
+class UseParametricFunction(Scene):
+    def construct(self):
+        vt = ValueTracker(0.5)
+        graph = ParametricFunction(lambda u : np.array([0.05*u, 0.5*np.cos(u), 0.5*np.sin(u)]),
+                                t_range=np.array([-4*TAU, 4*TAU, 0.1])).align_to(np.array([-4,0,0]), np.array([-1,0,0]))
+        def changeLength(mob):
+            i = vt.get_value()
+            mob.become(ParametricFunction(lambda u : np.array([0.09*i*u, 0.5*np.cos(u), 0.5*np.sin(u)]),
+                                t_range=np.array([-4*TAU, 4*TAU, 0.1])).align_to(np.array([-4,0,0]), np.array([-1,0,0])))
+
+        graph.add_updater(changeLength)
+
+        self.add(graph)
+        for _ in range(4):
+            self.play(vt.animate.set_value(2))
+            self.play(vt.animate.set_value(0.5))
+        return super().construct()
+    
+class LatexWithSlices(Scene):
+    def construct(self):
+        area = MathTex("S", "=", r"\pi R^2", "=", r"4\pi")
+
+        self.play(FadeIn(area[0], shift=UP))
+        self.play(TransformFromCopy(area[0], area[2]),
+                  Write(area[1]))
+        self.play(TransformFromCopy(area[2], area[4]),
+                  Write(area[3]))
+        self.play(Indicate(area[-1], run_time=2, scale_factor=1.5))
+        self.play(FadeOut(area, shift=DOWN), lag_ratio=0.1)
+        self.wait()
+
+        cases = MathTex(
+            r"\begin{cases} x > 0, \\"
+            r"x \neq 1. \end{cases}"
+        )
+        self.play(FadeIn(cases[0][0], shift=RIGHT))
+        self.wait()
+        self.play(FadeIn(cases[0][1:5], shift=LEFT))
+        self.wait()
+        self.play(FadeIn(cases[0][5:], shift=LEFT))
+        self.wait()
+        self.play(FadeToColor(cases[0][0], YELLOW))
+        self.play(Indicate(cases[0][1:5], run_time=3, color=ORANGE))
+        self.play(cases[0][6:8].animate.set_color(PINK))
+        self.wait()
+
+class GetCenterMethod(Scene):
+    def construct(self):
+        circle = Circle(color=GOLD_A)
+        circle.shift(3 *  RIGHT)
+        self.play(GrowFromCenter(circle))
+        self.wait()
+        self.play(Rotate(circle, TAU / 3, about_point=ORIGIN),
+                  run_time=2)
+        
+        self.wait()
+
+        dot = Dot().move_to(circle.get_center())
+        self.play(GrowFromCenter(dot))
+        self.wait()
+
+        dot_A = Dot().to_edge(UL, buff=0.5)
+        dot_B = Dot().to_edge(DR, buff=0.5)
+
+        double_arrow = DoubleArrow(
+            dot_A,
+            dot_B.get_center(),
+            tip_length=0.2
+        ).set_stroke(WHITE, 2)
+        self.play(GrowArrow(double_arrow), run_time=2)
+        self.play(FadeOut(double_arrow))
+        self.wait()
+        triangle = Polygon(dot.get_center(), LEFT, DR)
+        triangle.shift(3 * RIGHT).set_stroke(BLUE, 2)
+        self.play(GrowFromCenter(triangle))
+
+        group = VGroup(circle, triangle)
+        self.wait()
+
+        self.play(ApplyMethod(dot.move_to, group.get_center()))
+        self.wait()
+
+        line = Line(triangle.get_center(),
+                    circle.get_center())
+        self.play(Create(line))
+
+        box_1 = SurroundingRectangle(triangle, buff=0)
+        box_2 = SurroundingRectangle(circle, buff=0)
+        box_3 = SurroundingRectangle(group, buff=0)
+
+        boxes = VGroup(box_1, box_2, box_3)
+        self.play(FadeIn(boxes), lag_ratio=1, run_time=5)
+        self.wait()
+        self.play(FadeOut(boxes, dot, triangle, circle), lag_ratio=0.2)
+
+class AxesByHand(Scene):
+    def construct(self):
+        sin = FunctionGraph(lambda x: np.sin(x),
+            x_range=[-5.5, 5.5]).set_stroke(YELLOW, 3)
+        x_axis = Arrow(6 * LEFT, 6 * RIGHT, tip_length=0.15, buff=0).set_stroke(GREY, 1)
+        y_axis = Arrow(2 * DOWN, 2 * UP, tip_length=0.15, buff=0).set_stroke(GREY, 1)
+
+        label = MathTex("x", "y", "y=\\sin x").scale(0.8)
+        label[0].next_to(5.9 * RIGHT, DOWN, buff=0.17)
+        label[1].next_to(1.9 * UP, LEFT, buff=0.17)
+        label[2].next_to(4.6 * LEFT + UP, UP, buff=0.15)
+
+        self.play(GrowArrow(x_axis), GrowArrow(y_axis),
+                  run_time=2.5)
+        self.play(Create(sin), run_time=3)
+        self.play(Write(label), run_time=2)
+        self.wait()
+
+class GridPlane(Scene):
+    def construct(self):
+        number_plane = NumberPlane(
+            x_range=[-7,7,1],
+            y_range=[-4,4,1],
+            background_line_style={
+                "stroke_color": GREY,
+                "stroke_width": 1,
+                "stroke_opacity": 0.6
+            }
+        )
+        self.play(Create(number_plane), run_time=2)
+        polygon = Polygon(2 * UL, 3 * RIGHT + UP, 2 * DR, DOWN, 3 * DL)
+        polygon.set_fill(DARK_BLUE, 0.4).set_stroke(WHITE, 3)
+        self.play(DrawBorderThenFill(polygon))
+        self.wait()
+        self.play(FadeOut(polygon))
+        arrow_end = Dot(5 * RIGHT + 2 * UP)
+        arrow = Arrow(ORIGIN, arrow_end.get_center(), tip_length=0.2, buff=0)
+        arrow.set_stroke(YELLOW, 3)
+        label = MathTex("(5,2)").next_to(arrow_end.get_center(), UP)
+        
+        self.play(GrowArrow(arrow), run_time=1.5)
+        self.play(Create(label))
+        self.wait()
+
+class RateFuncAttribute(Scene):
+    def construct(self):
+        line_1 = DashedLine(
+            LEFT, 4 * RIGHT,
+            dash_length=0.4,
+            dashed_ratio=0.7
+        ).set_stroke(GREY_A, 2)
+        line_2 = line_1.copy().shift(UP)
+        dot_1 = Dot(LEFT, 0.12, color=YELLOW, z_index=1)
+        dot_2 = dot_1.copy().set_color(RED_E).shift(UP)
+
+        self.play(
+            Create(line_1, run_time=1.1),
+            Create(line_2, run_time=1.1,
+                   rate_func=linear)
+        )
+
+        self.play(GrowFromCenter(dot_1), GrowFromCenter(dot_2))
+        self.wait()
+        self.play(
+            ApplyMethod(dot_2.shift, 5 * RIGHT, rate_func=smooth),
+            ApplyMethod(dot_1.shift, 5 * RIGHT, rate_func=linear),
+            run_time=4
+        )
+        self.wait()
+        self.play(FadeOut(dot_1, dot_2, line_1, line_2), lag_ratio=0.1)
+        
+        arctg = FunctionGraph(lambda x: np.arctan(x),
+            x_range=[-5,5]).set_stroke(GREY, 2)
+        self.play(Create(arctg), run_time=1.5)
+        self.play(
+            ApplyMethod(
+                dot_1.move_to,
+                5*LEFT + np.arctan(5) * DOWN,
+                run_time=2
+            )
+        )
+        self.play(MoveAlongPath(dot_1, arctg), run_time=3)
+        self.play(MoveAlongPath(dot_1, arctg,
+            rate_func = lambda t: smooth(1 - t)), run_time=3)
+        self.play(MoveAlongPath(dot_1, arctg, rate_func=there_and_back),
+                  run_time=3)
+        
+class AlwaysRedrawMethod(Scene):
+    def construct(self):
+        dot = Dot()
+        label_1 = MathTex("A").next_to(dot, UP)
+
+        self.play(GrowFromCenter(dot), Write(label_1))
+        self.wait()
+        self.play(ApplyMethod(dot.shift, 2 * RIGHT),
+            run_time=4, rate_func=there_and_back)
+        self.wait()
+
+        label_2 = always_redraw(lambda: MathTex("B").next_to(dot, UP))
+        self.play(FadeOut(label_1))
+        self.play(FadeIn(label_2))
+        self.play(ApplyMethod(dot.shift, 2 * RIGHT),
+                  run_time=4, rate_func=there_and_back)
         self.wait()
