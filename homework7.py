@@ -165,4 +165,9 @@ class TriangleRule(Scene):
 
 class Test(Scene):
     def construct(self):
-        pass
+        parabola = FunctionGraph(
+            lambda x: np.square(x),
+            x_range = [-1, 2]
+        )
+        self.play(Create(parabola))
+        self.wait()
