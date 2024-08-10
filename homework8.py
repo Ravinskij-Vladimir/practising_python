@@ -119,6 +119,20 @@ class Fracts(Scene):
         self.wait()
         self.play(FadeOut(*self.mobjects))
 
+        euler = MathTex("e^{i\pi} + 1 = 0")
+        self.play(Write(euler[0][0]), run_time=2)
+        i_text = MathTex("i").shift(2 * DR)
+        self.play(GrowFromCenter(i_text))
+        self.play(Indicate(i_text, scale=3), run_time=2)
+        self.play(
+            ReplacementTransform(i_text, euler[0][1]),
+            Write(euler[0][2]),
+            TransformFromCopy(euler[0][0], euler[0][4]),
+            Write(euler[0][3]),
+            Write(euler[0][5:]),
+            lag_ratio=0.7, run_time=1.5)
+        self.wait()
+
 
 class AAA(Scene):
     def construct(self):
@@ -178,7 +192,7 @@ class AAA(Scene):
 
 class Parallel(Scene):
     def construct(self):
-        geometry = VGroup()
+        # Initial composition
         plane = NumberPlane(
             background_line_style={
                 "stroke_width": 2,
@@ -229,6 +243,7 @@ class Parallel(Scene):
         self.play(B.animate.shift(3 * LEFT))
         self.wait()
 
+        # Theorem
         equation = MathTex(
             r"BC \, \| \, AD \Longrightarrow \angle CBA = \angle DAB"
         ).shift(2.5 * UP)
@@ -250,6 +265,7 @@ class Parallel(Scene):
         self.play(composition.animate.to_edge(UL, buff=0.2))
         self.wait()
         
+        # Theorem proof block
         first_part = Tex(
             "1. Отметим середину отрезка $AB$, обозначим её буквой $O$",
             font_size=20
@@ -329,6 +345,7 @@ class Parallel(Scene):
             \end{itemize}""",
             font_size=20
         ).next_to(fourth_part_1, DOWN, aligned_edge=LEFT)
+
         self.play(Write(fourth_part_1), run_time=2)
         self.play(Write(fourth_part), run_time=7)
         self.wait()
@@ -350,6 +367,8 @@ class Parallel(Scene):
         box = SurroundingRectangle(qed, color=YELLOW)
         self.play(Create(box), run_time=2)
         self.wait(2)
+        
+        #In the end
         self.play(FadeOut(*self.mobjects, shift=DOWN), run_time=6, lag_ratio=0.1)
         self.wait()
 
