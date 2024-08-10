@@ -371,8 +371,7 @@ class ManyTriangles(Scene):
         )
         self.play(Create(ABC))
         circle = Circle()
-        circle.add_updater(lambda x: x.surround(ABC, buffer_factor=1, dim_to_match=2))
-        self.play(Create(circle))
+        
         self.play(A.animate.shift(2*RIGHT), rate_func=there_and_back, run_time=3)
         self.wait()
 
@@ -404,6 +403,9 @@ class ManyTriangles(Scene):
         self.wait()
 
         self.play(Rotate(B, TAU, about_point = 2 * DL), run_time=3)
+        self.wait()
+        group = VGroup(A,B,C,E,F,ABC,ACE, ABF)
+        self.play(group.animate.become(circle))
         self.wait()
 
 class Introduction(Scene):
