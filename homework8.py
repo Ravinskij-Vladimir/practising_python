@@ -372,8 +372,6 @@ class Parallel(Scene):
         self.play(FadeOut(*self.mobjects, shift=DOWN), run_time=6, lag_ratio=0.1)
         self.wait()
 
-            
-         
 
 class ManyTriangles(Scene):
     def construct(self):
@@ -438,4 +436,193 @@ class Introduction(Scene):
         self.play(Write(sub_greet), run_time=2)
         self.wait()
         self.play(FadeOut(greeting, sub_greet, shift=DOWN), run_time=2, lag_ratio=0.1)
+
+class TriangleHeight(Scene):
+    def construct(self):
+        A = Dot(ORIGIN)
+        B = Dot(2 * RIGHT + 6 * UP)
+        C = Dot(7 * RIGHT)
+        vertices = VGroup(A, B, C).move_to(ORIGIN)
+        vertices.set_stroke(WHITE, 2)
+        ABC = always_redraw(
+            lambda: Polygon(
+                A.get_center(),
+                B.get_center(),
+                C.get_center()
+            )
+        )
+        self.play(Create(ABC), Create(vertices), run_time=3)
+
+        H = always_redraw(
+            lambda: Dot(B.get_center() + 6 * DOWN)
+            .set_stroke(BLACK, 2.5)
+        )
+
+        BH = always_redraw(
+            lambda: Line(B.get_center(), H.get_center(), z_index=-1)
+            .set_stroke(BLUE, 3)
+        )
+
+        angle = always_redraw(
+            lambda: Elbow(width=0.3).set_stroke(BLUE, 2)
+            .next_to(H.get_center(), UR, buff=0)
+        )
+        self.play(Create(H), Create(BH, run_time=2),
+                  Create(angle), lag_ratio=0.3)
+        self.play(B.animate.shift(3.5 * RIGHT), run_time=7,
+                  rate_func=there_and_back)
+        self.wait()
+        
+
+class Outro(Scene):
+    def construct(self):
+        names = ["Debbie Woods",
+                 "John Johnson",
+                 "Carmen Burgess",
+                 "Theodore Day",
+                 "Tony Murphy",
+                 "Ruth Johnson",
+                 "Sandra Garcia",
+                 "Colleen Hall",
+                 "Eduardo Martin",
+                 "Tracy Johnson",
+                 "Stacey Scott"]
+        for name in names:
+            name_tex = Text(name).to_edge(DOWN)
+            self.play(FadeIn(name_tex), run_time=0.2)
+            self.play(name_tex.animate.to_edge(UP), run_time=0.4)
+            self.play(FadeOut(name_tex), run_time=0.2)
+        self.wait()
+
+class TheEnd(Scene):
+    def construct(self):
+        end = Text("The end!", font="Comic Sans MS", font_size=96)
+        line = Underline(end, color=YELLOW)
+        self.play(Write(end), run_time=4)
+        self.play(Flash(end), Create(line, rate_func=there_and_back, run_time=2))
+        self.play(Unwrite(end), reverse=False, run_time=3)
+
+
+class Yensen(Scene):
+    def construct(self):
+        pass
+
+class FillingCircle(Scene):
+    def construct(self):
+        big_circ = Circle().set_stroke(GREEN_D, 5, 1)
+        fill_percentage = ValueTracker(-0.15)
+        circ = always_redraw(lambda:
+            Sector(start_angle=PI / 2,
+                angle = 360 * DEGREES * fill_percentage.get_value(),
+                color=GREEN).set_stroke(BLACK, 0, 0)
+        )
+        perc_value = always_redraw( lambda:
+            DecimalNumber(fill_percentage.get_value() * 100))
+        percentage = always_redraw(lambda:
+            Text(f"Fill percentage: {np.round(-fill_percentage.get_value() * 100, 2)}%").shift(2 * UP)
+        )
+        self.play(Write(percentage))
+        self.play(GrowFromCenter(big_circ))
+        self.play(GrowFromPoint(circ, ORIGIN), run_time=2)
+        self.play(fill_percentage.animate.set_value(-0.75),
+                  rate_func=there_and_back,
+                  run_time=5)
+        self.wait()
+
+class ProportionalTriangle(Scene):
+
+    def collapsing(self, dest_group, source_group) -> None:
+        self.play(ReplacementTransform(source_group, dest_group))
+        self.wait()
+        self.play(GrowFromPoint(dest_group, ORIGIN),
+                  rate_func=lambda t: smooth(1 - t))
+        return None
+        
+    def print_text(self, text) -> None:
+        text.shift(3 * UP)
+        self.play(Create(text), run_time=2)
+        return None
+
+    def construct(self):
+
+        title = Text("Признаки подобия треугольников")
+        self.print_text(title)
+        self.wait(2)
+        self.play(Uncreate(title))
+        self.wait()
+
+        two_sides_one_angle = Text("По двум пропорциональным сторонам и углу между ними",
+                                   font_size=36)
+        self.print_text(two_sides_one_angle)
+        # Подобие по двум сторонам и углу между ними
+        triangle3 = Polygon(
+            LEFT, UP, 0.5 * RIGHT
+        ).shift(LEFT)
+        angle3 = Angle.from_three_points(UP, LEFT, RIGHT, other_angle=True).shift(LEFT)
+         
+        line_ab = Line(LEFT, UP, color=YELLOW).shift(LEFT)
+        line_ac = Line(LEFT, 0.5 * RIGHT, color=YELLOW).shift(LEFT)
+        tr_group_3 = VGroup(triangle3, angle3, line_ab, line_ac)
+        tr_group_3_copy = tr_group_3.copy().scale(2, about_point=LEFT).shift(3 * RIGHT)
+        for group in tr_group_3, tr_group_3_copy:
+            self.play(GrowFromCenter(group[:2]))
+        
+        for group in tr_group_3, tr_group_3_copy:
+            self.play(Create(group[2]), Create(group[3]), rate_func=there_and_back, run_time=4)
+        self.wait()
+        
+        self.collapsing(tr_group_3, tr_group_3_copy)
+        self.play(Uncreate(two_sides_one_angle))
+
+
+        # Подобие по двум углам
+        two_angles = Text("По двум равным углам", font_size=36)
+        self.print_text(two_angles)
+        triangle1 = Polygon(
+            LEFT, UP, 0.5 * RIGHT
+        ).shift(LEFT)
+        angle1 = Angle.from_three_points(UP, LEFT, RIGHT, other_angle=True).shift(LEFT)
+        angle_2 = Angle(
+            Line(UP, 0.5 * RIGHT),
+            Line(0.5 * RIGHT, LEFT),
+            quadrant=(-1,1),
+            color=GREY
+        ).shift(LEFT)
+        tr_group1 = VGroup(triangle1, angle1, angle_2)
+        tr_group2 = tr_group1.copy().scale(2, about_point = LEFT).shift(3 * RIGHT)
+        self.play(GrowFromCenter(tr_group1))
+        self.play(GrowFromCenter(tr_group2))
+        self.wait()
+        self.play(Indicate(tr_group1[1]), Indicate(tr_group2[1]), run_time=1.5)
+        self.play(Indicate(tr_group1[2]), Indicate(tr_group2[2]), run_time=1.5)
+        self.wait()
+
+        self.collapsing(tr_group1, tr_group2)
+        self.play(Uncreate(two_angles))
+
+        # подобие трем сторонам
+        three_sides = Text("По трём пропорциональным сторонам", font_size=36)
+        self.print_text(three_sides)
+        triangle4 = Polygon(LEFT, UP, 0.5 * RIGHT).shift(LEFT)
+        line_ab = Line(LEFT, UP, color=YELLOW).shift(LEFT)
+        line_bc = Line(UP, 0.5 * RIGHT, color=YELLOW).shift(LEFT)
+        
+        line_ac_2 = Line(LEFT, 0.5 * RIGHT, color=YELLOW).shift(LEFT)
+        tr_group_4 = VGroup(triangle4, line_ab, line_bc, line_ac_2)
+        tr_group_5 = tr_group_4.copy().scale(2, about_point=LEFT).shift(3 * RIGHT)
+        self.play(GrowFromCenter(tr_group_4[0]))
+        self.play(GrowFromCenter(tr_group_5[0]))
+                  
+        for i in range(1, 4):
+            self.play(Create(tr_group_4[i]), Create(tr_group_5[i]), rate_func = there_and_back, run_time=2)
+        self.wait()
+        
+        self.collapsing(tr_group_4, tr_group_5)
+        self.play(Uncreate(three_sides))
+        self.wait()
+
+        
+
+
+
 
