@@ -1,7 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TimedAnimation/3977891868_3125538709_223132457.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TimedAnimation/2852726489_1704852926_2062234908.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TimedAnimation/2852726489_1153633819_3631127911.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TimedAnimation/2852726489_1441529278_4131132508.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TimedAnimation/2852726489_1704852926_2390234012.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/TimedAnimation/2852726489_1029447899_4084614521.mp4'

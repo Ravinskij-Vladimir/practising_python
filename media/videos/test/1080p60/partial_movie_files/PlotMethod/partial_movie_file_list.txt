@@ -1,8 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/PlotMethod/3977891868_2990035159_223132457.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/PlotMethod/2852726489_2810400920_98927526.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/PlotMethod/2852726489_3020676673_2007745538.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/PlotMethod/2852726489_2475379470_3539589462.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/PlotMethod/2852726489_4050603542_1163318086.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/PlotMethod/2852726489_3875909620_1121056539.mp4'
-file 'file:C:/Users/Dennyman/Desktop/practising_python/media/videos/test/1080p60/partial_movie_files/PlotMethod/2852726489_1704852926_3565366398.mp4'
