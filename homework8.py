@@ -543,14 +543,7 @@ class ProportionalTriangle(Scene):
         self.play(Create(text), run_time=2)
         return None
 
-    def construct(self):
-
-        title = Text("Признаки подобия треугольников")
-        self.print_text(title)
-        self.wait(2)
-        self.play(Uncreate(title))
-        self.wait()
-
+    def two_sides_prop(self):
         two_sides_one_angle = Text("По двум пропорциональным сторонам и углу между ними",
                                    font_size=36)
         self.print_text(two_sides_one_angle)
@@ -573,8 +566,9 @@ class ProportionalTriangle(Scene):
         
         self.collapsing(tr_group_3, tr_group_3_copy)
         self.play(Uncreate(two_sides_one_angle))
-
-
+        return None
+    
+    def two_angles_prop(self):
         # Подобие по двум углам
         two_angles = Text("По двум равным углам", font_size=36)
         self.print_text(two_angles)
@@ -599,7 +593,9 @@ class ProportionalTriangle(Scene):
 
         self.collapsing(tr_group1, tr_group2)
         self.play(Uncreate(two_angles))
-
+        return None
+    
+    def three_sides_prop(self):
         # подобие трем сторонам
         three_sides = Text("По трём пропорциональным сторонам", font_size=36)
         self.print_text(three_sides)
@@ -620,6 +616,23 @@ class ProportionalTriangle(Scene):
         self.collapsing(tr_group_4, tr_group_5)
         self.play(Uncreate(three_sides))
         self.wait()
+
+    def construct(self):
+
+        title = Text("Признаки подобия треугольников")
+        self.print_text(title)
+        self.wait(2)
+        self.play(Uncreate(title))
+        self.wait()
+
+        self.two_sides_prop()
+        self.two_angles_prop()
+        self.three_sides_prop()
+
+
+        
+
+        
 
         
 
