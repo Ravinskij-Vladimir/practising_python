@@ -76,7 +76,7 @@ class Menelaus(Scene):
                     C_dot.get_center(),
                     z_index=-1)
         )
-        self.play(Create(dots))
+        self.play(Create(dots), run_time=1.5)
         self.play(Create(triangle), run_time=2)
         self.play(B_dot.animate.shift(RIGHT), rate_func=there_and_back, run_time=3)
         self.wait()
@@ -129,14 +129,21 @@ class Menelaus(Scene):
 
         menelaus_text = Text("Теорема Менелая").to_edge(UR, buff=0.7)
         menelaus_formula = MathTex(
-            r"\frac{AD}{DB} \cdot \frac{BF}{FC} \cdot \frac{CE}{EF} = 1"
+            r"\frac{AD}{DB} \cdot \frac{BF}{FC} \cdot \frac{CE}{EA} = 1"
         ).next_to(menelaus_text, DOWN)
-        self.play(Write(menelaus_text))
-        self.play(Create(menelaus_formula))
+        self.play(Write(menelaus_text), run_time=2)
+        self.play(Create(menelaus_formula), run_time=3)
         self.wait()
         self.play(FadeOut(menelaus_formula, menelaus_text, shift=DOWN))
+        self.play(FadeOut(plane))
 
         #доказательство
+        first_part = Tex(
+            "1. Проведем прямую $CO$ из точки $C$, параллельную стороне треугольника $AB$. Тогда "
+            "$O$ - точка пересечения данной прямой с $DE$.",
+            font_size=20
+        ).to_edge(UR, buff=0.5)
+        self.play(Write(first_part), run_time=4)
         B1_dot = always_redraw(lambda:
             Dot(Line(C_dot.get_center(), C_dot.get_center() + 2 * RIGHT + 4 * UP)
             .get_right()).set_opacity(0)
@@ -155,7 +162,6 @@ class Menelaus(Scene):
             ],
             radius=0.06)
         )
-        self.play(B_dot.animate.shift(RIGHT), rate_func=there_and_back)
         O_label = always_redraw(lambda:
             Text("O", font_size=18).next_to(O_dot, UP, buff=0.1)
         )
@@ -177,6 +183,153 @@ class Menelaus(Scene):
                   run_time=4, rate_func=there_and_back
         )
         self.wait(2)
+
+        # second_part = Tex(
+        #     r"2. Рассмотрим $\triangle OEC$ и $\triangle DEA$:",
+        #     r"""
+        #     \begin{itemize}
+        #         \item $\angle OEC$ - общий,  
+        #         \item $\angle OCE = \angle DAE$ - соответственные при \\ $OC \, \| \, DA$
+        #     \end{itemize}
+        #     """,
+        #     font_size=20
+        # ).next_to(first_part, DOWN, aligned_edge=LEFT)
+        # second_part[0].align_to(first_part, LEFT)
+        # brace = BraceLabel(second_part[1], 
+        #     r"\Longrightarrow \triangle OEC \sim \triangle DEA",
+        #     RIGHT,
+        #     font_size=20
+        # )
+        # angle_CEF = Angle(line_CE, line_DE, quadrant=(-1,-1),
+        #                   other_angle=True,
+        #                   radius=1)
+        # angle_OCE = Angle.from_three_points(
+        #     O_dot.get_center(),
+        #     C_dot.get_center(),
+        #     E_dot.get_center(),
+        #     color=GREY,
+        #     other_angle=True
+        # )
+        # angle_ADF = Angle.from_three_points(
+        #     A_dot.get_center(),
+        #     D_dot.get_center(),
+        #     F_dot.get_center(),
+        #     color=GREY,
+        #     other_angle=False
+        # )
+        # self.play(FadeIn(second_part, shift=UP))
+        # self.play(Create(angle_CEF))
+        # self.play(Create(angle_OCE), Create(angle_ADF))
+        # self.wait(1.5)
+        # self.play(TransformFromCopy(second_part, brace))
+        # self.wait()
+
+        third_part = Tex(
+            r"Из подобия:",
+            r"""
+            \begin{equation*}
+                \frac{OC}{DA} = \frac{OE}{EO} = \frac{CE}{EA} 
+                \Longrightarrow OC = \frac{CE \cdot DA}{EA} \;(1)
+            \end{equation*}
+            """,
+            font_size=20
+        ).next_to(composition, DOWN)
+        # self.play(Write(third_part[0]), run_time=1)
+        # self.play(Write(third_part[1][:17]), run_time=2)
+        # self.wait()
+        # self.play(TransformFromCopy(third_part[1][:17], third_part[1][17:]))
+        # self.wait()
+
+        fourth_part = Tex(
+            r"4. Рассмотрим $\triangle OFC$ и $\triangle FDB$:",
+            r"""
+            \begin{itemize}
+                \item $\angle OFC = \angle DFB$ - вертикальные,  
+                \item $\angle FDB = \angle FOC$ - накрест-лежащие при \\ $OC \, \| \, DA$
+            \end{itemize}
+            """,
+            font_size=20
+        ).next_to(third_part, DOWN, aligned_edge=LEFT)
+        fourth_part[0].align_to(third_part, LEFT)
+        brace_2 = BraceLabel(fourth_part[1], 
+            r"\Longrightarrow \triangle OFC \sim \triangle FDB",
+            RIGHT,
+            font_size=20
+        )
+        angle_OFC = Angle.from_three_points(
+            O_dot.get_center(),
+            F_dot.get_center(),
+            C_dot.get_center(),
+            other_angle=True,
+            color=GREEN
+        )
+        angle_DFB = Angle.from_three_points(
+            D_dot.get_center(),
+            F_dot.get_center(),
+            B_dot.get_center(),
+            other_angle=True,
+            color=GREEN
+        )
+
+        angle_FDB = Angle.from_three_points(
+            F_dot.get_center(),
+            D_dot.get_center(),
+            B_dot.get_center(),
+            color=RED_A
+        )
+
+        angle_FOC = Angle.from_three_points(
+            F_dot.get_center(),
+            O_dot.get_center(),
+            C_dot.get_center(),
+            color=RED_A
+        )
+        self.play(FadeIn(fourth_part, shift=UP))
+        self.play(Create(angle_OFC), Create(angle_DFB))
+        self.play(Create(angle_FDB), Create(angle_FOC))
+        self.wait(1.5)
+        self.play(FadeIn(brace_2, shift=RIGHT))
+        self.wait()
+
+        # fifth_part = Tex(
+        #     r"Из подобия:",
+        #     r"""
+        #     \begin{equation*}
+        #         \frac{OC}{DB} = \frac{CF}{BF} = \frac{OF}{OD} 
+        #         \Longrightarrow OC = \frac{DB \cdot CF}{BF} \; (2)
+        #     \end{equation*}
+        #     """,
+        #     font_size=20
+        # ).next_to(fourth_part, DOWN)
+        # self.play(Write(fifth_part[0]), run_time=1)
+        # self.play(Write(fifth_part[1][:17]), run_time=2)
+        # self.wait()
+        # self.play(FadeIn(fifth_part[1][17:], shift=RIGHT))
+        # self.wait()
+
+        # sixth_part = Tex(
+        #     "Из пунктов (1) и (2) получаем:",
+        #     r"""
+        #         \begin{equation*}
+        #             \frac{CE \cdot DA}{EA} = \frac{DB \cdot CF}{BF}
+        #             \Longrightarrow \frac{AD}{DB} \cdot \frac{BF}{FC} \cdot \frac{CE}{EA} = 1
+        #         \end{equation*}
+        #     """,
+        #     font_size=20
+        # ).next_to(second_part, DOWN, buff=0.5)
+        # self.play(Write(sixth_part), run_time=3)
+        # self.play(Indicate(sixth_part[1]), run_time=4)
+        # box = SurroundingRectangle(sixth_part[1], 
+        #     corner_radius=-0.10,
+        #     stroke_width=2)
+        # self.play(Create(box), run_time=1.5)
+        # qed = Tex("Q.E.D.").next_to(sixth_part, RIGHT)
+        # self.play(Write(qed), run_time=3)
+        
+        # self.wait()
+        # self.play(FadeOut(*self.mobjects))
+        # self.wait()
+
 
         
 
