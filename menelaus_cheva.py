@@ -52,7 +52,7 @@ class Menelaus(Scene):
                 "stroke_color": GREY,
                 "stroke_opacity": 0.7
             }
-        ).set_stroke(GREY, 2, 0.7).shift(DL)
+        ).set_stroke(GREY, 2, 0.7)
         self.play(Create(plane), run_time=2)
         # Постановка проблемы и первоначальные условия
         A_dot = Dot(LEFT, radius=0.03)
@@ -75,10 +75,10 @@ class Menelaus(Scene):
                     B_dot.get_center(),
                     C_dot.get_center(),
                     z_index=-1)
-                    )
+        )
         self.play(Create(dots))
         self.play(Create(triangle), run_time=2)
-        self.play(B_dot.animate.shift(RIGHT), rate_func=there_and_back)
+        self.play(B_dot.animate.shift(RIGHT), rate_func=there_and_back, run_time=3)
         self.wait()
         line_CE = always_redraw(lambda:
             Line(C_dot.get_center(), C_dot.get_center() + 4 * RIGHT, color=BLUE, z_index=-1)
@@ -137,9 +137,14 @@ class Menelaus(Scene):
         self.play(FadeOut(menelaus_formula, menelaus_text, shift=DOWN))
 
         #доказательство
-        B1_dot = B_dot.copy().shift(3 * RIGHT).set_opacity(0)
+        B1_dot = always_redraw(lambda:
+            Dot(Line(C_dot.get_center(), C_dot.get_center() + 2 * RIGHT + 4 * UP)
+            .get_right()).set_opacity(0)
+        )
+        #B1_dot = Dot(B_dot.get_center() + 3 * RIGHT)
+        self.play(Create(B1_dot))
         line_CB1 = always_redraw(lambda:
-            Line(C_dot.get_center(), B1_dot.get_center(), color=BLUE)
+            Line(C_dot.get_center(), B1_dot.get_center(), color=RED)
         )
         O_dot = always_redraw(lambda:
             self.get_intersection([
@@ -150,17 +155,24 @@ class Menelaus(Scene):
             ],
             radius=0.06)
         )
+        self.play(B_dot.animate.shift(RIGHT), rate_func=there_and_back)
         O_label = always_redraw(lambda:
             Text("O", font_size=18).next_to(O_dot, UP, buff=0.1)
         )
-        self.play(Create(line_CB1))
-        self.play(Create(O_dot), Create(O_label))
+        line_CO = always_redraw(lambda:
+            Line(C_dot.get_center(), O_dot.get_center(), color=BLUE, z_index=-1)
+        )
+
+        self.play(Create(O_dot), Create(O_label),
+            TransformFromCopy(Line(A_dot.get_center(), B_dot.get_center()),
+                line_CO)
+        )
         self.wait()
         self.play(
-                  B_dot.animate.shift(RIGHT),
-                  B1_dot.animate.shift(DL),
+                  #Rotate(B_dot, angle=-PI / 6, about_point=A_dot.get_center()),
                   Rotate(line_CE, angle=-PI / 6, about_point=A_dot.get_center()),
                   Rotate(C_dot, angle=-PI / 6, about_point=A_dot.get_center()),
+                  Rotate(O_dot, angle=-PI / 6, about_point=O_dot.get_center() - 3 * RIGHT),
                   Rotate(E_dot, angle=-PI / 6, about_point=A_dot.get_center()),
                   run_time=4, rate_func=there_and_back
         )
