@@ -425,7 +425,7 @@ class Cheva(Scene):
             )
         )
         self.play(Create(vertices))
-        self.play(GrowFromCenter(triangle))
+        self.play(Create(triangle))
         self.wait()
         self.next_section("C1 point")
 
@@ -481,7 +481,7 @@ class Cheva(Scene):
         B_1_dot = C_dot.copy()
         B_1_label = always_redraw(lambda:
             Tex("$B_1$", font_size=self.FONT_SIZE)
-            .next_to(B_1_dot, DOWN)
+            .next_to(B_1_dot, DR / np.sqrt(2), buff=0.1)
         )
         self.add(B_1_label)
         self.play(B_1_dot.animate.move_to(
@@ -522,6 +522,7 @@ class Cheva(Scene):
             .next_to(O_dot, UP))
         self.play(Create(O_dot), Create(O_label))
         self.wait()
+        #moving triangle
         self.play(B_dot.animate.shift(UR),
                   A_dot.animate.shift(DOWN),
                   rate_func=there_and_back,
@@ -544,11 +545,26 @@ class Cheva(Scene):
             font_size=self.FONT_SIZE
         ).next_to(cheva_text, DOWN).to_edge(RIGHT, buff=0.4)
 
+        line_AB1 = Line(A_dot.get_center(), B_1_dot.get_center(), color=YELLOW)
+        line_B1C = Line(B_1_dot.get_center(), C_dot.get_center(), color=YELLOW)
+        line_CA1 = Line(C_dot.get_center(), A_1_dot.get_center(), color=YELLOW)
+        line_A1B = Line(A_1_dot.get_center(), B_dot.get_center(), color=YELLOW)
+        line_BC1 = Line(B_dot.get_center(), C_1_dot.get_center(), color=YELLOW)
+        line_C1A = Line(C_1_dot.get_center(), A_dot.get_center(), color=YELLOW)
+
         self.play(Write(cheva_text))
         self.play(Create(cheva_formula), run_time=2)
         self.play(Indicate(cheva_formula), run_time=2)
+        self.play(Create(line_AB1), Create(line_B1C), run_time=2,
+                  rate_func=there_and_back)
+        self.play(Create(line_CA1), Create(line_A1B), run_time=2,
+                  rate_func=there_and_back)
+        self.play(Create(line_BC1), Create(line_C1A), run_time=2,
+                  rate_func=there_and_back)
         self.wait()
         self.play(FadeOut(plane, cheva_formula, cheva_text))
+        self.remove(plane, cheva_formula, cheva_text, line_A1B,
+                    line_B1C, line_C1A, line_CA1, line_BC1, line_AB1)
 
         self.next_section("Proof block start")
         composition = VGroup(A_dot, A_label,
@@ -564,17 +580,149 @@ class Cheva(Scene):
         self.play(composition.animate.to_corner(UL, buff=0.4))
         self.wait()
         self.remove(line_AB, line_AC, line_BC)
+        for item in composition:
+            item.clear_updaters()
 
         self.next_section("First part")
         first_part = Tex(
             "1. Проведем к прямой $BB_1$ перпендекуляры "
             "из точек $A$ и $C$, обозначим основания высот "
-            "как $K$ и $N$ соответственно", font_size=20
+            "как $K$ и $N$ соответственно.", font_size=20
         ).to_edge(UR, buff=0.4)
         self.play(FadeIn(first_part, shift=UP))
+        self.wait(2)
+        self.play(line_BB1.animate.scale(
+            1.4, about_point=B_dot.get_center()
+        ))
+        K_dot = Dot(line_BB1.get_projection(A_dot.get_center()))
+        K_label = Tex(
+            "K", font_size=self.FONT_SIZE, color=YELLOW
+        ).next_to(K_dot, DL, buff=0.15)
+        self.play(Create(K_dot), Create(K_label))
+        line_AK = Line(A_dot.get_center(), K_dot.get_center(), 
+            color=YELLOW, z_index=-1)
+        right_angle_K = RightAngle(line_AK, line_BB1, quadrant=(-1,-1)).scale(
+            0.6, about_point=K_dot.get_center()
+        )
+        self.play(Create(line_AK), Create(right_angle_K))
+
+        N_dot = Dot(line_BB1.get_projection(C_dot.get_center()))
+        N_label = Tex(
+            "N", font_size=self.FONT_SIZE, color=YELLOW
+        ).next_to(N_dot, UR, buff=0.15)
+        self.play(Create(N_dot), Create(N_label))
+        line_CN = Line(C_dot.get_center(), N_dot.get_center(), 
+            color=YELLOW, z_index=-1)
+        right_angle_N = RightAngle(line_CN, line_BB1, quadrant=(-1,-1)).scale(
+            0.6, about_point=N_dot.get_center()
+        )
+        self.play(Create(line_CN), Create(right_angle_N))
+        self.wait(2)
+
+        self.next_section("Proof second part")
+        second_part = Tex(
+            r"2. Рассмотрим $\triangle OAB$ и $\triangle OBC$: ",
+            r"$S_{OAB} = \frac{1}{2} \cdot OB \cdot AK$; \\ ",
+            r"$S_{OBC} = \frac{1}{2} \cdot OB \cdot CN$",
+            font_size=20
+        ).next_to(first_part, DOWN, aligned_edge=LEFT)
+        second_part[1:].set_color(YELLOW)
+        self.play(Write(second_part), run_time=5)
+        second_part_2 = MathTex(
+            r"\frac{S_{OAB}}{S_{OBC}} = "
+            r"\frac{\frac{1}{2} \cdot OB \cdot AK}{\frac{1}{2} \cdot OB \cdot CN}"
+            r"= \frac{AK}{CN}",
+            font_size=24
+        ).next_to(second_part, DOWN, aligned_edge=LEFT)
+        self.play(FadeIn(second_part_2, shift=UP), run_time=1.5)
+        self.play(Wiggle(second_part_2), scale_factor=2, run_time=3)
+        self.wait(2)
+
+        self.next_section("Proof third part")
+        second_part_2_copy = second_part_2.copy()
+        third_part = Tex(
+            "3. Рассмотрим $\\triangle AKB_1$ и $\\triangle CNB_1$:",
+            r"""
+            \begin{itemize}
+                \item $\angle AB_1K = \angle CB_1N$ (вертикальные)
+                \item $\angle AKB_1 = \angle CNB_1$ (прямые)
+            \end{itemize}
+            """,
+            font_size=20
+        ).next_to(second_part_2, DOWN, aligned_edge=LEFT)
+        angle_AB1K = Angle.from_three_points(
+            A_dot.get_center(),
+            B_1_dot.get_center(),
+            K_dot.get_center(),
+            color=TEAL,
+            radius=0.2
+        )
+        angle_CB1N = Angle.from_three_points(
+            C_dot.get_center(),
+            B_1_dot.get_center(),
+            N_dot.get_center(),
+            color=TEAL,
+            radius=0.2
+        )
+
+        third_part[0].next_to(second_part_2, DOWN, aligned_edge=LEFT)
+        self.play(ClockwiseTransform(second_part_2_copy, third_part))
+        self.play(Create(angle_AB1K), Create(angle_CB1N), run_time=2)
+        brace_1 = BraceLabel(third_part[1], 
+            r"\Longrightarrow \triangle AKB_1 \sim \triangle CNB_1 ",
+            RIGHT, font_size=20)
+        self.play(TransformFromCopy(third_part[1], brace_1))
+        self.wait(2)
+
+        third_part_1 = Tex(
+            "Из подобия: ",
+            r"""
+            \begin{equation*}
+                \frac{AK}{CN} = \frac{AB_1}{B_1C}
+                \Longrightarrow \frac{S_{OAB}}{S_{OBC}} = \frac{AB_1}{B_1C}
+            \end{equation*}
+            """,
+            font_size=20
+        ).next_to(third_part, DOWN, aligned_edge=LEFT)
+        third_part_copy = third_part[1].copy()
+        self.play(CounterclockwiseTransform(third_part_copy, third_part_1))
+        self.wait(2)
+        
+        self.next_section("Proof fourth part")
+
+        fourth_part = Tex(
+            "4. Если провести высоты к прямым $AA_1$ и $CC_1$ и повторить аналогичные "
+            "преобразования, получим:",
+            font_size=20
+        ).next_to(composition, DOWN).to_edge(LEFT, buff=0.4)
+        self.play(FadeIn(fourth_part, shift=LEFT))
+        self.wait()
+        proportions = MathTex(
+            r"\frac{S_{OAC}}{S_{OAB}} = \frac{CA_1}{A_1B} \\"
+            r"\frac{S_{OBC}}{S_{OAC}} = \frac{BC_1}{C_1A}",
+            font_size=24
+        ).next_to(fourth_part, DOWN)
+        self.play(FadeIn(proportions, shift=DOWN))
+        brace_2 = Brace(proportions, RIGHT)
+        self.play(Create(brace_2))
+        self.wait()
+
+        summary = MathTex(
+            r"\Longrightarrow \frac{AB_1}{B_1C} \cdot \frac{CA_1}{A_1B} \cdot \frac{BC_1}{C_1A} = ",
+            r"\frac{S_{OAB}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}",
+            " = 1",
+            font_size=20
+        ).next_to(brace_2, RIGHT, buff=0.1)
+        self.play(GrowFromCenter(summary))
+        canceled_summary = Tex(
+            r"\frac{\cancel{S_{OAB}}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}"
+        ).move_to(summary[1])
+        self.add(canceled_summary)
         self.wait()
         
-
+class Test(Scene):
+    def construct(self):
+        pass
 
         
         
