@@ -580,6 +580,7 @@ class Cheva(Scene):
         self.play(composition.animate.to_corner(UL, buff=0.4))
         self.wait()
         self.remove(line_AB, line_AC, line_BC)
+        # Элемент оптимизации
         for item in composition:
             item.clear_updaters()
 
@@ -602,7 +603,7 @@ class Cheva(Scene):
         line_AK = Line(A_dot.get_center(), K_dot.get_center(), 
             color=YELLOW, z_index=-1)
         right_angle_K = RightAngle(line_AK, line_BB1, quadrant=(-1,-1)).scale(
-            0.6, about_point=K_dot.get_center()
+            0.3, about_point=K_dot.get_center()
         )
         self.play(Create(line_AK), Create(right_angle_K))
 
@@ -614,7 +615,7 @@ class Cheva(Scene):
         line_CN = Line(C_dot.get_center(), N_dot.get_center(), 
             color=YELLOW, z_index=-1)
         right_angle_N = RightAngle(line_CN, line_BB1, quadrant=(-1,-1)).scale(
-            0.6, about_point=N_dot.get_center()
+            0.3, about_point=N_dot.get_center()
         )
         self.play(Create(line_CN), Create(right_angle_N))
         self.wait(2)
@@ -711,14 +712,31 @@ class Cheva(Scene):
             r"\Longrightarrow \frac{AB_1}{B_1C} \cdot \frac{CA_1}{A_1B} \cdot \frac{BC_1}{C_1A} = ",
             r"\frac{S_{OAB}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}",
             " = 1",
-            font_size=20
+            font_size=24
         ).next_to(brace_2, RIGHT, buff=0.1)
-        self.play(GrowFromCenter(summary))
+        self.play(FadeIn(summary[:-1], shift=RIGHT))
         canceled_summary = Tex(
-            r"\frac{\cancel{S_{OAB}}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}"
+            r"""
+            \begin{equation*}
+                \frac{\cancel{S_{OAB}}}{\cancel{S_{OBC}}} \cdot 
+                \frac{\cancel{S_{OAC}}}{\cancel{S_{OAB}}} \cdot 
+                \frac{\cancel{S_{OBC}}}{\cancel{S_{OAC}}}
+            \end{equation*}
+            """, font_size=24
         ).move_to(summary[1])
-        self.add(canceled_summary)
+        self.play(Write(canceled_summary), run_time=2)
+        self.play(Write(summary[-1]))
+        box = SurroundingRectangle(summary, color=YELLOW, corner_radius=0.15)
+        self.play(GrowFromCenter(box), run_time=2)
         self.wait()
+
+        self.next_section("In the end")
+        qed = Tex("Q.E.D.", font_size=40).to_corner(DR, buff=0.4)
+        self.play(Write(qed), run_time=4)
+        stroke = Underline(qed)
+        self.play(Create(stroke), run_time=2)
+        self.wait()
+        self.play(FadeOut(*self.mobjects))
         
 class Test(Scene):
     def construct(self):
@@ -726,17 +744,22 @@ class Test(Scene):
             r"\Longrightarrow \frac{AB_1}{B_1C} \cdot \frac{CA_1}{A_1B} \cdot \frac{BC_1}{C_1A} = ",
             r"\frac{S_{OAB}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}",
             " = 1",
-            font_size=20
+            font_size=24
         )
-        self.play(GrowFromCenter(summary))
+        self.play(FadeIn(summary[:-1], shift=RIGHT))
         canceled_summary = Tex(
             r"""
             \begin{equation*}
-                \frac{\xcancel{S_{OAB}}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}
+                \frac{\cancel{S_{OAB}}}{\cancel{S_{OBC}}} \cdot 
+                \frac{\cancel{S_{OAC}}}{\cancel{S_{OAB}}} \cdot 
+                \frac{\cancel{S_{OBC}}}{\cancel{S_{OAC}}}
             \end{equation*}
-            """, font_size=20
+            """, font_size=24
         ).move_to(summary[1])
-        self.add(canceled_summary)
+        self.play(Write(canceled_summary), run_time=2)
+        self.play(Write(summary[-1]))
+        box = SurroundingRectangle(summary, color=YELLOW, corner_radius=0.15)
+        self.play(GrowFromCenter(box), run_time=2)
         self.wait()
 
         
