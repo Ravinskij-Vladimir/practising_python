@@ -366,6 +366,32 @@ class Menelaus(Scene):
         
 class Cheva(Scene):
     FONT_SIZE = 36
+    def get_intersection(self, dots, **kwargs):
+        x1_1, y1_1 = dots[0], dots[1]
+        x1_2, y1_2 = dots[2], dots[3]
+        x2_1, y2_1 = dots[4], dots[5]
+        x2_2, y2_2 = dots[6], dots[7]
+
+        A1 = y1_1 - y1_2
+        B1 = x1_2 - x1_1
+        C1 = x1_1*y1_2 - x1_2*y1_1
+        A2 = y2_1 - y2_2
+        B2 = x2_2 - x2_1
+        C2 = x2_1*y2_2 - x2_2*y2_1
+
+        result_dot = Dot()
+        if B1*A2 - B2*A1 and A1:
+            y = (C2*A1 - C1*A2) / (B1*A2 - B2*A1)
+            x = (-C1 - B1*y) / A1
+            result_dot = Dot(x * RIGHT + y * UP, **kwargs)
+        elif B1*A2 - B2*A1 and A2:
+            y = (C2*A1 - C1*A2) / (B1*A2 - B2*A1)
+            x = (-C2 - B2*y) / A2
+            result_dot = Dot(x * RIGHT + y * UP, **kwargs)
+        else:
+            result_dot = None
+        return result_dot
+    
     def construct(self):
         self.next_section("Start")
         plane = NumberPlane().set_stroke(GREY, 2, 0.7)
@@ -401,16 +427,16 @@ class Cheva(Scene):
         self.play(Create(vertices))
         self.play(GrowFromCenter(triangle))
         self.wait()
-        self.next_section("Middle_points")
+        self.next_section("C1 point")
 
         line_AB = always_redraw(lambda:
             Line(A_dot.get_center(), B_dot.get_center()).set_opacity(0)
         )
         line_BC = always_redraw(lambda:
-            Line(A_dot.get_center(), B_dot.get_center()).set_opacity(0)
+            Line(B_dot.get_center(), C_dot.get_center()).set_opacity(0)
         )
         line_AC = always_redraw(lambda:
-            Line(A_dot.get_center(), B_dot.get_center()).set_opacity(0)
+            Line(A_dot.get_center(), C_dot.get_center()).set_opacity(0)
         )
         self.add(line_AB, line_AC, line_BC)
         
@@ -428,9 +454,126 @@ class Cheva(Scene):
             Dot(line_AB.point_from_proportion(1 / 3))
         )
         self.add(C_1_dot)
-        self.play(A_dot.animate.shift(UL), rate_func=there_and_back)
+        self.play(A_dot.animate.shift(UL), rate_func=there_and_back,
+                  run_time=2)
         
         self.wait()
+
+        self.next_section("A1 point")
+        A_1_dot = B_dot.copy()
+        A_1_label = always_redraw(lambda:
+            Tex("$A_1$", font_size=self.FONT_SIZE)
+            .next_to(A_1_dot, RIGHT)
+        )
+        self.add(A_1_label)
+        self.play(A_1_dot.animate.move_to(
+            line_BC.point_from_proportion(2 / 5)
+        ))
+        self.remove(A_1_dot)
+        A_1_dot = always_redraw(lambda:
+            Dot(line_BC.point_from_proportion(2 / 5))
+        )
+        self.add(A_1_dot)
+       
+        self.wait()
+
+        self.next_section("B1 point")
+        B_1_dot = C_dot.copy()
+        B_1_label = always_redraw(lambda:
+            Tex("$B_1$", font_size=self.FONT_SIZE)
+            .next_to(B_1_dot, DOWN)
+        )
+        self.add(B_1_label)
+        self.play(B_1_dot.animate.move_to(
+            line_AC.point_from_proportion(1 / 4)
+        ))
+        self.remove(B_1_dot)
+        B_1_dot = always_redraw(lambda:
+            Dot(line_AC.point_from_proportion(1 / 4))
+        )
+        self.add(B_1_dot)
+        
+        self.wait()
+
+        self.next_section("chevians")
+        line_AA1 = always_redraw(lambda:
+             Line(A_dot.get_center(), A_1_dot.get_center(),
+                    z_index=-1, color=GREEN)                    
+        )
+        line_BB1 = always_redraw(lambda:
+             Line(B_dot.get_center(), B_1_dot.get_center(),
+                    z_index=-1, color=GREEN)                    
+        )
+        line_CC1 = always_redraw(lambda:
+             Line(C_dot.get_center(), C_1_dot.get_center(),
+                    z_index=-1, color=GREEN)                    
+        )
+        self.play(Create(line_AA1), Create(line_BB1), Create(line_CC1))
+        O_dot = always_redraw(lambda:
+            self.get_intersection([
+                A_dot.get_x(), A_dot.get_y(),
+                A_1_dot.get_x(), A_1_dot.get_y(),
+                B_dot.get_x(), B_dot.get_y(),
+                B_1_dot.get_x(), B_1_dot.get_y()
+            ])
+        )
+        O_label = always_redraw(lambda:
+            Tex("O", font_size=self.FONT_SIZE)
+            .next_to(O_dot, UP))
+        self.play(Create(O_dot), Create(O_label))
+        self.wait()
+        self.play(B_dot.animate.shift(UR),
+                  A_dot.animate.shift(DOWN),
+                  rate_func=there_and_back,
+                  run_time=3)
+        self.play(B_dot.animate.shift(2 * LEFT),
+                  C_dot.animate.shift(UP),
+                  rate_func=there_and_back,
+                  run_time=3)
+        self.play(A_dot.animate.shift(LEFT + 2 * UP),
+                  C_dot.animate.shift(2 * DL),
+                  rate_func=there_and_back,
+                  run_time=3)
+        self.wait()
+
+        self.next_section("Cheva formula intro")
+        cheva_text = Tex("Теорема Чевы:",
+            font_size=self.FONT_SIZE).to_corner(UR, buff=0.4)
+        cheva_formula=MathTex(
+            r"\frac{AB_1}{B_1C} \cdot \frac{CA_1}{A_1B} \cdot \frac{BC_1}{C_1A} = 1",
+            font_size=self.FONT_SIZE
+        ).next_to(cheva_text, DOWN).to_edge(RIGHT, buff=0.4)
+
+        self.play(Write(cheva_text))
+        self.play(Create(cheva_formula), run_time=2)
+        self.play(Indicate(cheva_formula), run_time=2)
+        self.wait()
+        self.play(FadeOut(plane, cheva_formula, cheva_text))
+
+        self.next_section("Proof block start")
+        composition = VGroup(A_dot, A_label,
+                            B_dot, B_label,
+                            C_dot, C_label,
+                            A_1_dot, A_1_label,
+                            triangle,
+                            C_1_dot, C_1_label,
+                            B_1_dot, B_1_label,
+                            O_dot, O_label,
+                            line_AA1, line_BB1, line_CC1
+                            )
+        self.play(composition.animate.to_corner(UL, buff=0.4))
+        self.wait()
+        self.remove(line_AB, line_AC, line_BC)
+
+        self.next_section("First part")
+        first_part = Tex(
+            "1. Проведем к прямой $BB_1$ перпендекуляры "
+            "из точек $A$ и $C$, обозначим основания высот "
+            "как $K$ и $N$ соответственно", font_size=20
+        ).to_edge(UR, buff=0.4)
+        self.play(FadeIn(first_part, shift=UP))
+        self.wait()
+        
 
 
         
