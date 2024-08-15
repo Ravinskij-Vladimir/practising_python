@@ -722,7 +722,22 @@ class Cheva(Scene):
         
 class Test(Scene):
     def construct(self):
-        pass
+        summary = MathTex(
+            r"\Longrightarrow \frac{AB_1}{B_1C} \cdot \frac{CA_1}{A_1B} \cdot \frac{BC_1}{C_1A} = ",
+            r"\frac{S_{OAB}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}",
+            " = 1",
+            font_size=20
+        )
+        self.play(GrowFromCenter(summary))
+        canceled_summary = Tex(
+            r"""
+            \begin{equation*}
+                \frac{\xcancel{S_{OAB}}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}
+            \end{equation*}
+            """, font_size=20
+        ).move_to(summary[1])
+        self.add(canceled_summary)
+        self.wait()
 
         
         
