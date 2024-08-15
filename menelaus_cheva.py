@@ -1,5 +1,112 @@
 from manim import *
 
+
+class OuterMenelaus(Scene):
+
+    def get_intersection(self, dots, **kwargs):
+        x1_1, y1_1 = dots[0], dots[1]
+        x1_2, y1_2 = dots[2], dots[3]
+        x2_1, y2_1 = dots[4], dots[5]
+        x2_2, y2_2 = dots[6], dots[7]
+
+        A1 = y1_1 - y1_2
+        B1 = x1_2 - x1_1
+        C1 = x1_1*y1_2 - x1_2*y1_1
+        A2 = y2_1 - y2_2
+        B2 = x2_2 - x2_1
+        C2 = x2_1*y2_2 - x2_2*y2_1
+
+        result_dot = Dot()
+        if B1*A2 - B2*A1 and A1:
+            y = (C2*A1 - C1*A2) / (B1*A2 - B2*A1)
+            x = (-C1 - B1*y) / A1
+            result_dot = Dot(x * RIGHT + y * UP, **kwargs)
+        elif B1*A2 - B2*A1 and A2:
+            y = (C2*A1 - C1*A2) / (B1*A2 - B2*A1)
+            x = (-C2 - B2*y) / A2
+            result_dot = Dot(x * RIGHT + y * UP, **kwargs)
+        else:
+            result_dot = None
+        return result_dot
+    
+    
+    def construct(self):
+        self.next_section("Start")
+        plane = NumberPlane(
+            background_line_style={
+                "stroke_width": 2,
+                "stroke_color": GREY,
+                "stroke_opacity": 0.7
+            }
+        ).set_stroke(GREY, 2, 0.7)
+        self.play(Create(plane), run_time=2)
+        A_dot = Dot(LEFT, radius=0.03)
+        A_label = always_redraw(lambda: 
+            Text("A", font_size=18).next_to(A_dot, DOWN, buff=0.1)
+        )
+        B_dot = Dot(UP, radius=0.03)
+        B_label = always_redraw(lambda: 
+            Text("B", font_size=18).next_to(B_dot, UP, buff=0.1)
+        )
+        C_dot = Dot(0.5 * RIGHT, radius=0.03)
+        C_label = always_redraw(lambda: 
+            Text("C", font_size=18).next_to(C_dot, DOWN, buff=0.1)
+        )
+        
+        dots = VGroup(A_dot, A_label, B_dot, B_label, C_dot, C_label)
+        dots.scale(2, about_point=ORIGIN)
+        triangle = always_redraw(lambda:
+            Polygon(A_dot.get_center(),
+                    B_dot.get_center(),
+                    C_dot.get_center(),
+                    z_index=-1)
+        )
+        self.play(Create(dots), run_time=1.5)
+        self.play(Create(triangle), run_time=2)
+        self.play(B_dot.animate.shift(RIGHT), rate_func=there_and_back, run_time=3)
+        self.wait()
+        line_CE = always_redraw(lambda:
+            Line(C_dot.get_center(), C_dot.get_center() + 4 * RIGHT, color=BLUE, z_index=-1)
+        )
+        
+        E_dot = always_redraw(lambda:
+            Dot(line_CE.get_right(), radius=0.06).scale(2 / 3, about_point=C_dot.get_center())
+            .scale(3 / 2)
+        )
+        
+        E_label = always_redraw(lambda:
+            Text("E", font_size=18).next_to(E_dot, DOWN, buff=0.1)
+        )
+        self.play(Create(line_CE), Create(E_dot), Create(E_label))
+
+        #Сдвиг точки вдоль прямой
+        D_dot = always_redraw(lambda:
+            B_dot.copy().scale(2 / 3, about_point=A_dot.get_center())
+            .scale(3 / 2)
+        )
+        
+        D_label = always_redraw(lambda:
+            Text("D", font_size=18).next_to(D_dot, LEFT, buff=0.1)
+        )
+
+        line_DE = always_redraw(lambda:
+            Line(D_dot.get_center(), E_dot.get_center(), z_index=-1, color=BLUE)
+        )
+        self.play(Create(D_dot), Create(D_label), Create(line_DE))
+        F_dot = always_redraw(lambda:
+            self.get_intersection([
+                D_dot.get_x(), D_dot.get_y(),
+                E_dot.get_x(), E_dot.get_y(),
+                C_dot.get_x(), C_dot.get_y(),
+                B_dot.get_x(), B_dot.get_y()
+            ],
+            radius=0.06)
+        )
+        F_label = always_redraw(lambda:
+            Text("F", font_size=18).next_to(F_dot, RIGHT + 0.3 * UP, buff=0.1))
+        self.play(Create(F_dot), Create(F_label))
+
+
 class Menelaus(Scene):
 
     def get_intersection(self, dots, **kwargs):
@@ -603,7 +710,7 @@ class Cheva(Scene):
         line_AK = Line(A_dot.get_center(), K_dot.get_center(), 
             color=YELLOW, z_index=-1)
         right_angle_K = RightAngle(line_AK, line_BB1, quadrant=(-1,-1)).scale(
-            0.3, about_point=K_dot.get_center()
+            0.4, about_point=K_dot.get_center()
         )
         self.play(Create(line_AK), Create(right_angle_K))
 
@@ -615,7 +722,7 @@ class Cheva(Scene):
         line_CN = Line(C_dot.get_center(), N_dot.get_center(), 
             color=YELLOW, z_index=-1)
         right_angle_N = RightAngle(line_CN, line_BB1, quadrant=(-1,-1)).scale(
-            0.3, about_point=N_dot.get_center()
+            0.4, about_point=N_dot.get_center()
         )
         self.play(Create(line_CN), Create(right_angle_N))
         self.wait(2)
@@ -630,14 +737,27 @@ class Cheva(Scene):
         second_part[1:].set_color(YELLOW)
         self.play(Write(second_part), run_time=5)
         second_part_2 = MathTex(
-            r"\frac{S_{OAB}}{S_{OBC}} = "
-            r"\frac{\frac{1}{2} \cdot OB \cdot AK}{\frac{1}{2} \cdot OB \cdot CN}"
+            r"\frac{S_{OAB}}{S_{OBC}} = ",
+            r"\frac{\frac{1}{2} \cdot OB \cdot AK}{\frac{1}{2} \cdot OB \cdot CN}",
             r"= \frac{AK}{CN}",
             font_size=24
         ).next_to(second_part, DOWN, aligned_edge=LEFT)
-        self.play(FadeIn(second_part_2, shift=UP), run_time=1.5)
-        self.play(Wiggle(second_part_2), scale_factor=2, run_time=3)
-        self.wait(2)
+        canceled_second_part_2 = MathTex(
+            r"""
+            \frac{\cancel{\frac{1}{2}} \cdot \cancel{OB} \cdot AK}
+            {\cancel{\frac{1}{2}} \cdot \cancel{OB} \cdot CN}
+            """,
+            font_size=24
+        ).move_to(second_part_2[1])
+        self.play(FadeIn(second_part_2[:-1]))
+        self.wait()
+        self.play(Write(canceled_second_part_2[0][0:3]),
+                  Write(canceled_second_part_2[0][3:8]),
+                  Write(canceled_second_part_2[0][14:18]),
+                  Write(canceled_second_part_2[0][19:24]))
+        self.wait()
+        self.play(Write(second_part_2[-1]))
+        self.wait()
 
         self.next_section("Proof third part")
         second_part_2_copy = second_part_2.copy()
@@ -740,26 +860,27 @@ class Cheva(Scene):
         
 class Test(Scene):
     def construct(self):
-        summary = MathTex(
-            r"\Longrightarrow \frac{AB_1}{B_1C} \cdot \frac{CA_1}{A_1B} \cdot \frac{BC_1}{C_1A} = ",
-            r"\frac{S_{OAB}}{S_{OBC}} \cdot \frac{S_{OAC}}{S_{OAB}} \cdot \frac{S_{OBC}}{S_{OAC}}",
-            " = 1",
+        second_part_2 = MathTex(
+            r"\frac{S_{OAB}}{S_{OBC}} = ",
+            r"\frac{\frac{1}{2} \cdot OB \cdot AK}{\frac{1}{2} \cdot OB \cdot CN}",
+            r"= \frac{AK}{CN}",
             font_size=24
         )
-        self.play(FadeIn(summary[:-1], shift=RIGHT))
-        canceled_summary = Tex(
+        canceled_second_part_2 = MathTex(
             r"""
-            \begin{equation*}
-                \frac{\cancel{S_{OAB}}}{\cancel{S_{OBC}}} \cdot 
-                \frac{\cancel{S_{OAC}}}{\cancel{S_{OAB}}} \cdot 
-                \frac{\cancel{S_{OBC}}}{\cancel{S_{OAC}}}
-            \end{equation*}
-            """, font_size=24
-        ).move_to(summary[1])
-        self.play(Write(canceled_summary), run_time=2)
-        self.play(Write(summary[-1]))
-        box = SurroundingRectangle(summary, color=YELLOW, corner_radius=0.15)
-        self.play(GrowFromCenter(box), run_time=2)
+            \frac{\cancel{\frac{1}{2}} \cdot \cancel{OB} \cdot AK}
+            {\cancel{\frac{1}{2}} \cdot \cancel{OB} \cdot CN}
+            """,
+            font_size=24
+        ).move_to(second_part_2[1])
+        self.play(FadeIn(second_part_2[:-1]))
+        self.wait()
+        self.play(Write(canceled_second_part_2[0][0:3]),
+                  Write(canceled_second_part_2[0][3:8]),
+                  Write(canceled_second_part_2[0][14:18]),
+                  Write(canceled_second_part_2[0][19:24]))
+        self.wait()
+        self.play(Write(second_part_2[-1]))
         self.wait()
 
         
