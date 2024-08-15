@@ -1,21 +1,5 @@
 from manim import *
 
-class LineA(Scene):
-    def construct(self):
-        A = Dot(DL)
-        B = Dot(UR)
-        l = always_redraw(lambda:
-            Line(A.get_center(), B.get_center())
-        )
-        C = always_redraw(lambda:
-            B.copy().scale(2 / 3, about_point=A.get_center())
-            .scale(3 / 2)
-        )
-        self.play(Create(A), Create(B), Create(l))
-        self.play(Create(C))
-        self.wait()
-        self.play(B.animate.shift(RIGHT), rate_func=there_and_back)
-
 class Menelaus(Scene):
 
     def get_intersection(self, dots, **kwargs):
@@ -46,6 +30,8 @@ class Menelaus(Scene):
 
 
     def construct(self):
+        # Постановка проблемы и первоначальные условия
+        self.next_section("Start")
         plane = NumberPlane(
             background_line_style={
                 "stroke_width": 2,
@@ -54,7 +40,6 @@ class Menelaus(Scene):
             }
         ).set_stroke(GREY, 2, 0.7)
         self.play(Create(plane), run_time=2)
-        # Постановка проблемы и первоначальные условия
         A_dot = Dot(LEFT, radius=0.03)
         A_label = always_redraw(lambda: 
             Text("A", font_size=18).next_to(A_dot, DOWN, buff=0.1)
@@ -132,12 +117,55 @@ class Menelaus(Scene):
             r"\frac{AD}{DB} \cdot \frac{BF}{FC} \cdot \frac{CE}{EA} = 1"
         ).next_to(menelaus_text, DOWN)
         self.play(Write(menelaus_text), run_time=2)
-        self.play(Create(menelaus_formula), run_time=3)
+        self.play(Create(menelaus_formula), run_time=2)
         self.wait()
+        first_pair_1 = Line(
+            A_dot.get_center(),
+            D_dot.get_center(),
+            color=YELLOW
+        )
+        first_pair_2 = Line(
+            D_dot.get_center(),
+            B_dot.get_center(),
+            color=YELLOW
+        )
+        second_pair_1 = Line(
+            B_dot.get_center(),
+            F_dot.get_center(),
+            color=YELLOW
+        )
+        second_pair_2 = Line(
+            F_dot.get_center(),
+            C_dot.get_center(),
+            color=YELLOW
+        )
+        third_pair_1 = Line(
+            E_dot.get_center(),
+            C_dot.get_center(),
+            color=YELLOW
+        )
+        third_pair_2 = Line(
+            E_dot.get_center(),
+            A_dot.get_center(),
+            color=YELLOW
+        )
+        self.play(Create(first_pair_1), Create(first_pair_2),
+                  run_time=3, rate_func=there_and_back)
+        self.play(Create(second_pair_1), Create(second_pair_2),
+                  run_time=3, rate_func=there_and_back)
+        self.play(Create(third_pair_1), Create(third_pair_2),
+                  run_time=3, rate_func=there_and_back)
+        self.remove(first_pair_1, first_pair_2, second_pair_1, second_pair_2,
+                    third_pair_1, third_pair_2)
+
+        
         self.play(FadeOut(menelaus_formula, menelaus_text, shift=DOWN))
         self.play(FadeOut(plane))
 
+
+
         #доказательство
+        self.next_section("proof block, first part")
         first_part = Tex(
             "1. Проведем прямую $CO$ из точки $C$, параллельную стороне треугольника $AB$. Тогда "
             "$O$ - точка пересечения данной прямой с $DE$.",
@@ -148,7 +176,6 @@ class Menelaus(Scene):
             Dot(Line(C_dot.get_center(), C_dot.get_center() + 2 * RIGHT + 4 * UP)
             .get_right()).set_opacity(0)
         )
-        #B1_dot = Dot(B_dot.get_center() + 3 * RIGHT)
         self.play(Create(B1_dot))
         line_CB1 = always_redraw(lambda:
             Line(C_dot.get_center(), B1_dot.get_center(), color=RED)
@@ -175,7 +202,6 @@ class Menelaus(Scene):
         )
         self.wait()
         self.play(
-                  #Rotate(B_dot, angle=-PI / 6, about_point=A_dot.get_center()),
                   Rotate(line_CE, angle=-PI / 6, about_point=A_dot.get_center()),
                   Rotate(C_dot, angle=-PI / 6, about_point=A_dot.get_center()),
                   Rotate(O_dot, angle=-PI / 6, about_point=O_dot.get_center() - 3 * RIGHT),
@@ -184,62 +210,65 @@ class Menelaus(Scene):
         )
         self.wait(2)
 
-        # second_part = Tex(
-        #     r"2. Рассмотрим $\triangle OEC$ и $\triangle DEA$:",
-        #     r"""
-        #     \begin{itemize}
-        #         \item $\angle OEC$ - общий,  
-        #         \item $\angle OCE = \angle DAE$ - соответственные при \\ $OC \, \| \, DA$
-        #     \end{itemize}
-        #     """,
-        #     font_size=20
-        # ).next_to(first_part, DOWN, aligned_edge=LEFT)
-        # second_part[0].align_to(first_part, LEFT)
-        # brace = BraceLabel(second_part[1], 
-        #     r"\Longrightarrow \triangle OEC \sim \triangle DEA",
-        #     RIGHT,
-        #     font_size=20
-        # )
-        # angle_CEF = Angle(line_CE, line_DE, quadrant=(-1,-1),
-        #                   other_angle=True,
-        #                   radius=1)
-        # angle_OCE = Angle.from_three_points(
-        #     O_dot.get_center(),
-        #     C_dot.get_center(),
-        #     E_dot.get_center(),
-        #     color=GREY,
-        #     other_angle=True
-        # )
-        # angle_ADF = Angle.from_three_points(
-        #     A_dot.get_center(),
-        #     D_dot.get_center(),
-        #     F_dot.get_center(),
-        #     color=GREY,
-        #     other_angle=False
-        # )
-        # self.play(FadeIn(second_part, shift=UP))
-        # self.play(Create(angle_CEF))
-        # self.play(Create(angle_OCE), Create(angle_ADF))
-        # self.wait(1.5)
-        # self.play(TransformFromCopy(second_part, brace))
-        # self.wait()
+        self.next_section("Second part")
+        second_part = Tex(
+            r"2. Рассмотрим $\triangle OEC$ и $\triangle DEA$:",
+            r"""
+            \begin{itemize}
+                \item $\angle OEC$ - общий,  
+                \item $\angle COE = \angle ADE$ - соответственные при \\ $OC \, \| \, DA$
+            \end{itemize}
+            """,
+            font_size=20
+        ).next_to(first_part, DOWN, aligned_edge=LEFT)
+        second_part[0].align_to(first_part, LEFT)
+        brace = BraceLabel(second_part[1], 
+            r"\Longrightarrow \triangle OEC \sim \triangle DEA",
+            RIGHT,
+            font_size=20
+        )
+        angle_CEF = Angle(line_CE, line_DE, quadrant=(-1,-1),
+                          other_angle=True,
+                          radius=1)
+        angle_COE = Angle.from_three_points(
+            C_dot.get_center(),
+            O_dot.get_center(),
+            E_dot.get_center(),
+            color=GREY,
+            other_angle=False
+        )
+        angle_ADF = Angle.from_three_points(
+            A_dot.get_center(),
+            D_dot.get_center(),
+            F_dot.get_center(),
+            color=GREY,
+            other_angle=False
+        )
+        self.play(FadeIn(second_part, shift=UP))
+        self.play(Create(angle_CEF))
+        self.play(Create(angle_COE), Create(angle_ADF))
+        self.wait(1.5)
+        self.play(TransformFromCopy(second_part, brace))
+        self.wait()
 
+        self.next_section("Third part")
         third_part = Tex(
             r"Из подобия:",
             r"""
             \begin{equation*}
-                \frac{OC}{DA} = \frac{OE}{EO} = \frac{CE}{EA} 
+                \frac{OC}{DA} = \frac{OE}{ED} = \frac{CE}{EA} 
                 \Longrightarrow OC = \frac{CE \cdot DA}{EA} \;(1)
             \end{equation*}
             """,
             font_size=20
         ).next_to(composition, DOWN)
-        # self.play(Write(third_part[0]), run_time=1)
-        # self.play(Write(third_part[1][:17]), run_time=2)
-        # self.wait()
-        # self.play(TransformFromCopy(third_part[1][:17], third_part[1][17:]))
-        # self.wait()
+        self.play(Write(third_part[0]), run_time=1)
+        self.play(Write(third_part[1][:17]), run_time=2)
+        self.wait()
+        self.play(TransformFromCopy(third_part[1][:17], third_part[1][17:]))
+        self.wait()
 
+        self.next_section("Fourth part")
         fourth_part = Tex(
             r"4. Рассмотрим $\triangle OFC$ и $\triangle FDB$:",
             r"""
@@ -285,53 +314,124 @@ class Menelaus(Scene):
             color=RED_A
         )
         self.play(FadeIn(fourth_part, shift=UP))
-        self.play(Create(angle_OFC), Create(angle_DFB))
-        self.play(Create(angle_FDB), Create(angle_FOC))
+        self.play(Create(angle_OFC), Create(angle_DFB), run_time=2)
+        self.play(Create(angle_FDB), Create(angle_FOC), run_time=2)
         self.wait(1.5)
         self.play(FadeIn(brace_2, shift=RIGHT))
         self.wait()
 
-        # fifth_part = Tex(
-        #     r"Из подобия:",
-        #     r"""
-        #     \begin{equation*}
-        #         \frac{OC}{DB} = \frac{CF}{BF} = \frac{OF}{OD} 
-        #         \Longrightarrow OC = \frac{DB \cdot CF}{BF} \; (2)
-        #     \end{equation*}
-        #     """,
-        #     font_size=20
-        # ).next_to(fourth_part, DOWN)
-        # self.play(Write(fifth_part[0]), run_time=1)
-        # self.play(Write(fifth_part[1][:17]), run_time=2)
-        # self.wait()
-        # self.play(FadeIn(fifth_part[1][17:], shift=RIGHT))
-        # self.wait()
+        self.next_section("Fifth part")
+        fifth_part = Tex(
+            r"Из подобия:",
+            r"""
+            \begin{equation*}
+                \frac{OC}{DB} = \frac{CF}{BF} = \frac{OF}{OD} 
+                \Longrightarrow OC = \frac{DB \cdot CF}{BF} \; (2)
+            \end{equation*}
+            """,
+            font_size=20
+        ).next_to(fourth_part, DOWN)
+        self.play(Write(fifth_part[0]), run_time=1)
+        self.play(Write(fifth_part[1][:17]), run_time=2)
+        self.wait()
+        self.play(FadeIn(fifth_part[1][17:], shift=RIGHT))
+        self.wait()
 
-        # sixth_part = Tex(
-        #     "Из пунктов (1) и (2) получаем:",
-        #     r"""
-        #         \begin{equation*}
-        #             \frac{CE \cdot DA}{EA} = \frac{DB \cdot CF}{BF}
-        #             \Longrightarrow \frac{AD}{DB} \cdot \frac{BF}{FC} \cdot \frac{CE}{EA} = 1
-        #         \end{equation*}
-        #     """,
-        #     font_size=20
-        # ).next_to(second_part, DOWN, buff=0.5)
-        # self.play(Write(sixth_part), run_time=3)
-        # self.play(Indicate(sixth_part[1]), run_time=4)
-        # box = SurroundingRectangle(sixth_part[1], 
-        #     corner_radius=-0.10,
-        #     stroke_width=2)
-        # self.play(Create(box), run_time=1.5)
-        # qed = Tex("Q.E.D.").next_to(sixth_part, RIGHT)
-        # self.play(Write(qed), run_time=3)
+        self.next_section("Sixth part")
+        sixth_part = Tex(
+            "Из пунктов (1) и (2) получаем:",
+            r"""
+                \begin{equation*}
+                    \frac{CE \cdot DA}{EA} = \frac{DB \cdot CF}{BF}
+                    \Longrightarrow \frac{AD}{DB} \cdot \frac{BF}{FC} \cdot \frac{CE}{EA} = 1
+                \end{equation*}
+            """,
+            font_size=20
+        ).next_to(second_part, DOWN, buff=0.5)
+        self.play(Write(sixth_part), run_time=3)
+        self.play(Indicate(sixth_part[1]), run_time=4)
+        box = SurroundingRectangle(sixth_part[1], 
+            corner_radius=-0.10,
+            stroke_width=2)
+        self.play(Create(box), run_time=2)
+        qed = Tex("Q.E.D.").next_to(sixth_part, DR)
+        self.play(Write(qed), run_time=3)
         
-        # self.wait()
-        # self.play(FadeOut(*self.mobjects))
-        # self.wait()
+        self.next_section("The end")
+        self.wait()
+        self.play(FadeOut(*self.mobjects))
+        self.wait()
 
 
         
+class Cheva(Scene):
+    FONT_SIZE = 36
+    def construct(self):
+        self.next_section("Start")
+        plane = NumberPlane().set_stroke(GREY, 2, 0.7)
+        self.add(plane)
+        A_dot = Dot(2*LEFT + DOWN)
+        A_label = always_redraw(lambda:
+            Tex("$A$", font_size=self.FONT_SIZE)
+            .next_to(A_dot, LEFT)
+        )
+
+        B_dot = Dot(2* UP)
+        B_label = always_redraw(lambda:
+            Tex("$B$", font_size=self.FONT_SIZE)
+            .next_to(B_dot, UP)
+        )
+
+        C_dot = Dot(2*RIGHT)
+        C_label = always_redraw(lambda:
+            Tex("$C$", font_size=self.FONT_SIZE)
+            .next_to(C_dot, RIGHT)
+        )
+        vertices = VGroup(A_dot, A_label,
+                          B_dot, B_label,
+                          C_dot, C_label)
+        triangle = always_redraw(lambda:
+            Polygon(
+                A_dot.get_center(),
+                B_dot.get_center(),
+                C_dot.get_center(),
+                z_index=-1
+            )
+        )
+        self.play(Create(vertices))
+        self.play(GrowFromCenter(triangle))
+        self.wait()
+        self.next_section("Middle_points")
+
+        line_AB = always_redraw(lambda:
+            Line(A_dot.get_center(), B_dot.get_center()).set_opacity(0)
+        )
+        line_BC = always_redraw(lambda:
+            Line(A_dot.get_center(), B_dot.get_center()).set_opacity(0)
+        )
+        line_AC = always_redraw(lambda:
+            Line(A_dot.get_center(), B_dot.get_center()).set_opacity(0)
+        )
+        self.add(line_AB, line_AC, line_BC)
+        
+        C_1_dot = A_dot.copy()
+        C_1_label = always_redraw(lambda:
+            Tex("$C_1$", font_size=self.FONT_SIZE)
+            .next_to(C_1_dot, LEFT)
+        )
+        self.add(C_1_label)
+        self.play(C_1_dot.animate.move_to(
+            line_AB.point_from_proportion(1 / 3)
+        ))
+        self.remove(C_1_dot)
+        C_1_dot = always_redraw(lambda:
+            Dot(line_AB.point_from_proportion(1 / 3))
+        )
+        self.add(C_1_dot)
+        self.play(A_dot.animate.shift(UL), rate_func=there_and_back)
+        
+        self.wait()
+
 
         
         
